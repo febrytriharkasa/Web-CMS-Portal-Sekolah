@@ -415,10 +415,3 @@ database/seeders/DatabaseSeeder.php               Data awal aplikasi
 database/seeders/DummyPostWithTableSeeder.php     Data dummy tabel post
 config/chatbot.php                                Konfigurasi chatbot
 ```
-
-Dokumen lain:
-
-- `PRD.md` untuk ruang lingkup, skema database, dan roadmap.
-- `PROGRESS.md` untuk riwayat pengerjaan dan catatan keterbatasan.
-- `AGENTS.md` untuk konvensi kerja dan aturan desain.
-- `DESIGN.md` untuk token warna, tipografi, spacing, radius, dan shadow.
