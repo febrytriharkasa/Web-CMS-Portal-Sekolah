@@ -206,7 +206,7 @@ class SiteSettingController extends Controller
                 return;
             }
 
-            if (str_starts_with($value, '/') || str_starts_with($value, '#')) {
+            if ((str_starts_with($value, '/') && ! str_starts_with($value, '//')) || str_starts_with($value, '#')) {
                 return;
             }
 
@@ -283,7 +283,7 @@ class SiteSettingController extends Controller
             'footer_groups.*.title' => 'required|string|max:100',
             'footer_groups.*.links' => 'required|array|min:1',
             'footer_groups.*.links.*.label' => 'required|string|max:100',
-            'footer_groups.*.links.*.url' => 'required|string|max:500',
+            'footer_groups.*.links.*.url' => ['required', 'string', 'max:500', $this->urlRule()],
         ]);
 
         $this->saveLogoSetting($request, 'site_logo_file', 'site_logo', 'remove_site_logo');
@@ -346,10 +346,10 @@ class SiteSettingController extends Controller
             'nav_items.*.type' => 'required|in:single,dropdown',
             // Dropdowns may be parked half-finished: label, url, and children can stay empty.
             'nav_items.*.label' => 'nullable|string|max:255|required_if:nav_items.*.type,single',
-            'nav_items.*.url' => 'required_if:nav_items.*.type,single|nullable|string|max:500',
+            'nav_items.*.url' => ['required_if:nav_items.*.type,single', 'nullable', 'string', 'max:500', $this->urlRule()],
             'nav_items.*.children' => 'nullable|array',
             'nav_items.*.children.*.label' => 'required|string|max:255',
-            'nav_items.*.children.*.url' => 'required|string|max:500',
+            'nav_items.*.children.*.url' => ['required', 'string', 'max:500', $this->urlRule()],
         ]);
 
         SiteSetting::saveNavItems($validated['nav_items'] ?? []);
@@ -385,7 +385,7 @@ class SiteSettingController extends Controller
             'sidebar_cta_heading' => 'nullable|string|max:150',
             'sidebar_cta_description' => 'nullable|string|max:500',
             'sidebar_cta_button_text' => 'nullable|string|max:50',
-            'sidebar_cta_button_url' => 'nullable|string|max:500',
+            'sidebar_cta_button_url' => ['nullable', 'string', 'max:500', $this->urlRule()],
         ]);
 
         foreach ($validated as $key => $value) {
@@ -403,7 +403,7 @@ class SiteSettingController extends Controller
         $validated = $request->validate([
             'topbar_links' => 'nullable|array',
             'topbar_links.*.label' => 'required|string|max:100',
-            'topbar_links.*.url' => 'required|string|max:500',
+            'topbar_links.*.url' => ['required', 'string', 'max:500', $this->urlRule()],
         ]);
 
         SiteSetting::updateOrCreate(

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Staff;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class StaffController extends Controller
@@ -39,13 +41,20 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
-        Staff::create($request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'role' => 'required|string|max:255',
             'type' => 'required|in:guru,tendik,gtk',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:30',
-        ]));
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $data['photo'] = ImageOptimizer::storeAndUrl($request->file('photo'), 'staff', 800);
+        }
+
+        Staff::create($data);
 
         return redirect()->route('admin.staff.index')->with('success', 'Data guru/tendik ditambahkan.');
     }
@@ -66,21 +75,39 @@ class StaffController extends Controller
 
     public function update(Request $request, Staff $staff)
     {
-        $staff->update($request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
             'role' => 'required|string|max:255',
             'type' => 'required|in:guru,tendik,gtk',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:30',
-        ]));
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $this->deletePhoto($staff->photo);
+            $data['photo'] = ImageOptimizer::storeAndUrl($request->file('photo'), 'staff', 800);
+        }
+
+        $staff->update($data);
 
         return redirect()->route('admin.staff.index')->with('success', 'Data guru/tendik diperbarui.');
     }
 
     public function destroy(Staff $staff)
     {
+        $this->deletePhoto($staff->photo);
         $staff->delete();
 
         return redirect()->route('admin.staff.index')->with('success', 'Data berhasil dihapus.');
+    }
+
+    private function deletePhoto(?string $photo): void
+    {
+        $path = ltrim(str_replace('/storage/', '', (string) $photo), '/');
+
+        if ($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

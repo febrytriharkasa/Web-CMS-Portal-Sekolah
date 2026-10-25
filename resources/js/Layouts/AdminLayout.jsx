@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
+import '../../css/admin.css';
 import Button from '@/Components/Button';
 import Icon from '@/Components/Icon';
 import ThemeToggle from '@/Components/ThemeToggle';
@@ -81,6 +82,7 @@ export default function AdminLayout({ children, title }) {
         { name: 'Kartu PPDB (Sidebar Artikel)', href: '/admin/settings/sidebar-cta' },
         { name: 'Layanan Pintas (3 Card)', href: '/admin/settings/quick-links' },
         { name: 'Media Sosial', href: '/admin/settings/social-media' },
+        { name: 'Chat AI', href: '/admin/settings/chat' },
     ];
 
     const isActive = (href) => url.startsWith(href);

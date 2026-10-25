@@ -130,4 +130,62 @@ class PostDetailRouteTest extends TestCase
             ->where('nextPost.category.slug', 'berita')
         );
     }
+
+    public function test_post_detail_lists_recent_posts_from_all_categories(): void
+    {
+        $user = User::factory()->create();
+        $berita = Category::firstOrCreate(['slug' => 'berita'], ['name' => 'Berita']);
+        $prestasi = Category::firstOrCreate(['slug' => 'prestasi'], ['name' => 'Prestasi']);
+
+        Post::create([
+            'user_id' => $user->id,
+            'category_id' => $berita->id,
+            'title' => 'Post Aktif',
+            'slug' => 'post-aktif',
+            'content' => 'Konten aktif',
+            'status' => 'published',
+            'published_at' => now()->subDay(),
+        ]);
+
+        Post::create([
+            'user_id' => $user->id,
+            'category_id' => $prestasi->id,
+            'title' => 'Prestasi Terbaru',
+            'slug' => 'prestasi-terbaru',
+            'content' => 'Konten prestasi',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        Post::create([
+            'user_id' => $user->id,
+            'category_id' => $berita->id,
+            'title' => 'Berita Lama',
+            'slug' => 'berita-lama',
+            'content' => 'Konten lama',
+            'status' => 'published',
+            'published_at' => now()->subDays(3),
+        ]);
+
+        Post::create([
+            'user_id' => $user->id,
+            'category_id' => $prestasi->id,
+            'title' => 'Draf Terbaru',
+            'slug' => 'draf-terbaru',
+            'content' => 'Konten draf',
+            'status' => 'draft',
+            'published_at' => now()->addHour(),
+        ]);
+
+        $response = $this->get('/berita/post-aktif');
+
+        $response->assertOk();
+        $response->assertInertia(fn (Assert $page) => $page
+            ->component('Public/PostDetail')
+            ->has('recentPosts', 2)
+            ->where('recentPosts.0.slug', 'prestasi-terbaru')
+            ->where('recentPosts.0.category.slug', 'prestasi')
+            ->where('recentPosts.1.slug', 'berita-lama')
+        );
+    }
 }

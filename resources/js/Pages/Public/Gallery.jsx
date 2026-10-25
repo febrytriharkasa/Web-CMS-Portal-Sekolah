@@ -2,12 +2,11 @@ import PublicLayout from '@/Layouts/PublicLayout';
 import Seo from '@/Components/Seo';
 import Breadcrumbs from '@/Components/Breadcrumbs';
 import Pagination from '@/Components/Pagination';
-import ChatWidget from '@/Components/ChatWidget';
 import { Link } from '@inertiajs/react';
+import { postUrl } from '@/lib/postUrl'
 import { useEffect, useState, lazy, Suspense } from 'react';
 import { youtubeThumbnailUrl } from '@/lib/postBlocks';
-import { motion } from 'framer-motion';
-import { StaggerContainer, staggerItem, Reveal } from '@/Components/Reveal';
+import { StaggerContainer, Reveal } from '@/Components/Reveal';
 
 const MediaPreviewModal = lazy(() => import('@/Components/MediaPreviewModal'));
 
@@ -31,7 +30,7 @@ function GalleryTile({ item, eager, onPreview }) {
             : item.featured_image;
 
     return (
-        <motion.figure variants={staggerItem} className="group relative overflow-hidden rounded-xl bg-slate-200 shadow-sm">
+        <figure className="stagger-item group relative overflow-hidden rounded-xl bg-slate-200 shadow-sm">
             <div className="aspect-square">
                 {thumbnail ? (
                     <img
@@ -70,10 +69,13 @@ function GalleryTile({ item, eager, onPreview }) {
                 {isVideo ? 'Video' : 'Gambar'}
             </span>
 
-            <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 p-3">
-                <span className="line-clamp-2 text-xs font-semibold leading-5 text-white sm:text-sm">
-                    {item.title}
-                </span>
+            <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 z-20 p-2">
+                <Link
+                    href={postUrl(item)}
+                    className="pointer-events-auto flex min-h-11 items-center rounded text-xs font-semibold leading-5 text-white underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white sm:text-sm"
+                >
+                    <span className="line-clamp-2">{item.title}</span>
+                </Link>
             </figcaption>
 
             <button
@@ -82,7 +84,7 @@ function GalleryTile({ item, eager, onPreview }) {
                 aria-label={`Buka ${isVideo ? 'video' : 'gambar'}: ${item.title}`}
                 className="absolute inset-0 z-10 cursor-zoom-in rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
             />
-        </motion.figure>
+        </figure>
     );
 }
 
@@ -171,16 +173,16 @@ export default function Gallery({ title = 'Galeri', items, media = null, counts 
                 </div>
             </section>
 
-            <ChatWidget />
-
-            <Suspense fallback={null}>
-                <MediaPreviewModal
-                    items={previewIndex === null ? null : photos}
-                    index={previewIndex ?? 0}
-                    onIndexChange={setPreviewIndex}
-                    onClose={() => setPreviewIndex(null)}
-                />
-            </Suspense>
+            {previewIndex !== null && (
+                <Suspense fallback={null}>
+                    <MediaPreviewModal
+                        items={photos}
+                        index={previewIndex}
+                        onIndexChange={setPreviewIndex}
+                        onClose={() => setPreviewIndex(null)}
+                    />
+                </Suspense>
+            )}
         </PublicLayout>
     );
 }

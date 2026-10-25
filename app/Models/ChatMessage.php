@@ -15,6 +15,7 @@ class ChatMessage extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
+        'content' => 'encrypted',
     ];
 
     public function session()

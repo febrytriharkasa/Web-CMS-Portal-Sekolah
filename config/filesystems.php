@@ -15,6 +15,9 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
+    'upload_virus_scan' => (bool) env('UPLOAD_VIRUS_SCAN', false),
+    'virus_scanner' => env('VIRUS_SCANNER', 'clamscan'),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks

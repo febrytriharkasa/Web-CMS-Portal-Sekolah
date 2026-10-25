@@ -2,8 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\ChatSession;
+use App\Models\Post;
 use App\Models\SiteSetting;
+use App\Models\User;
+use App\Services\Chatbot\SchoolContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -171,6 +175,111 @@ class ChatBotTest extends TestCase
 
         $session = ChatSession::where('session_token', $response->json('session_token'))->first();
         $this->assertCount(2, $session->messages);
+    }
+
+    public function test_latest_news_fallback_lists_newest_post_first_with_url(): void
+    {
+        config(['chatbot.driver' => 'off']);
+
+        $user = User::factory()->create();
+        $category = Category::firstOrCreate(['slug' => 'berita'], ['name' => 'Berita']);
+
+        $older = $this->createBerita($user, $category, 'Kunjungan Edukasi ke ITS', '2026-10-18');
+        $newer = $this->createBerita($user, $category, 'Pelaksanaan ANBK 2026', '2026-10-20');
+
+        $response = $this->postJson('/api/chat', ['message' => 'Berita paling terbaru?']);
+
+        $response->assertOk();
+        $reply = $response->json('reply');
+
+        $this->assertStringContainsString($newer->title, $reply);
+        $this->assertStringContainsString('/berita/pelaksanaan-anbk-2026', $reply);
+        $this->assertLessThan(
+            strpos($reply, $older->title),
+            strpos($reply, $newer->title),
+            'Berita terbaru harus disebut lebih dulu.'
+        );
+    }
+
+    public function test_latest_news_retrieval_orders_posts_by_published_date(): void
+    {
+        $user = User::factory()->create();
+        $category = Category::firstOrCreate(['slug' => 'berita'], ['name' => 'Berita']);
+
+        $older = $this->createBerita($user, $category, 'Kunjungan Edukasi ke ITS', '2026-10-18');
+        $newer = $this->createBerita($user, $category, 'Pelaksanaan ANBK 2026', '2026-10-20');
+
+        $prompt = SchoolContext::for('berita terbaru');
+
+        $this->assertStringContainsString('[2026-10-20] '.$newer->title, $prompt);
+        $this->assertStringContainsString(SchoolContext::postUrl($newer), $prompt);
+        $this->assertLessThan(
+            strpos($prompt, $older->title),
+            strpos($prompt, $newer->title),
+            'Konteks harus menaruh berita terbaru di depan.'
+        );
+    }
+
+    public function test_social_media_question_lists_configured_links(): void
+    {
+        config(['chatbot.driver' => 'off']);
+
+        SiteSetting::updateOrCreate(['key' => 'social_instagram'], ['value' => 'https://instagram.com/smaliska']);
+        SiteSetting::updateOrCreate(['key' => 'social_whatsapp'], ['value' => 'https://wa.me/628123456789']);
+
+        $response = $this->postJson('/api/chat', ['message' => 'Apa Instagram dan WA sekolah?']);
+
+        $response->assertOk();
+        $reply = $response->json('reply');
+
+        $this->assertStringContainsString('https://instagram.com/smaliska', $reply);
+        $this->assertStringContainsString('https://wa.me/628123456789', $reply);
+    }
+
+    public function test_social_media_question_without_links_is_honest(): void
+    {
+        config(['chatbot.driver' => 'off']);
+
+        $response = $this->postJson('/api/chat', ['message' => 'Nomor WA sekolah berapa?']);
+
+        $response->assertOk();
+        $reply = $response->json('reply');
+
+        $this->assertStringContainsString('belum dicantumkan', $reply);
+        $this->assertStringNotContainsString('instagram.com', $reply);
+    }
+
+    public function test_social_word_boundary_does_not_hijack_other_questions(): void
+    {
+        config(['chatbot.driver' => 'off']);
+
+        $response = $this->postJson('/api/chat', ['message' => 'Apa kewajiban siswa di sekolah?']);
+
+        $response->assertOk();
+
+        $this->assertStringNotContainsString('Media sosial resmi', $response->json('reply'));
+    }
+
+    public function test_system_prompt_includes_social_media_links(): void
+    {
+        SiteSetting::updateOrCreate(['key' => 'social_instagram'], ['value' => 'https://instagram.com/smaliska']);
+
+        $prompt = SchoolContext::for('apa instagram sekolah');
+
+        $this->assertStringContainsString('https://instagram.com/smaliska', $prompt);
+    }
+
+    private function createBerita(User $user, Category $category, string $title, string $date): Post
+    {
+        return Post::create([
+            'user_id' => $user->id,
+            'category_id' => $category->id,
+            'title' => $title,
+            'slug' => Str::slug($title),
+            'content' => 'Isi berita.',
+            'status' => 'published',
+            'published_at' => $date.' 08:00:00',
+        ]);
     }
 
     protected function tearDown(): void

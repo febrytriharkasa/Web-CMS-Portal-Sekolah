@@ -1,7 +1,6 @@
 import PublicLayout from '@/Layouts/PublicLayout';
 import Seo from '@/Components/Seo';
 import Breadcrumbs from '@/Components/Breadcrumbs';
-import ChatWidget from '@/Components/ChatWidget';
 import DataTable from '@/Components/DataTable';
 import RichContent from '@/Components/RichContent';
 import { blocksFromMetadata } from '@/lib/postBlocks';
@@ -105,8 +104,6 @@ export default function Page({ page, draftPreview = false }) {
                 </article>
             </div>
             </Reveal>
-
-            <ChatWidget />
         </PublicLayout>
     );
 }

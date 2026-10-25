@@ -3,10 +3,8 @@ import Seo from '@/Components/Seo';
 import Card from '@/Components/Card';
 import Badge from '@/Components/Badge';
 import Breadcrumbs from '@/Components/Breadcrumbs';
-import ChatWidget from '@/Components/ChatWidget';
 import { usePage } from '@inertiajs/react';
-import { Reveal, StaggerContainer, staggerItem } from '@/Components/Reveal';
-import { motion } from 'framer-motion';
+import { Reveal, StaggerContainer } from '@/Components/Reveal';
 
 export default function Statistics({ statSettings, counts }) {
     const { settings = {} } = usePage().props;
@@ -38,7 +36,7 @@ export default function Statistics({ statSettings, counts }) {
 
                 <StaggerContainer className="grid md:grid-cols-4 gap-6 mt-6">
                     {stats.map((stat, idx) => (
-                        <motion.div key={idx} variants={staggerItem}>
+                        <div key={idx} className="stagger-item">
                         <Card className="p-6 text-center">
                             <div className="w-12 h-12 mx-auto bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-3">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,12 +46,10 @@ export default function Statistics({ statSettings, counts }) {
                             <p className="text-3xl font-bold text-primary mb-1">{stat.value}</p>
                             <p className="text-sm text-slate-600">{stat.label}</p>
                         </Card>
-                        </motion.div>
+                        </div>
                     ))}
                 </StaggerContainer>
             </div>
-
-            <ChatWidget />
         </PublicLayout>
     );
 }

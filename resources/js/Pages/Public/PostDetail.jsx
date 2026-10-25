@@ -72,9 +72,11 @@ function PostMedia({ post }) {
                 <figcaption className="mt-2 px-2 text-xs italic text-slate-500">
                     Dokumentasi — {post.category?.name || 'SMA XYZ'}
                 </figcaption>
-                <Suspense fallback={null}>
-                    <MediaPreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
-                </Suspense>
+                {previewItem && (
+                    <Suspense fallback={null}>
+                        <MediaPreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
+                    </Suspense>
+                )}
             </figure>
         );
     }
@@ -186,7 +188,43 @@ function PostNavCard({ post }) {
     );
 }
 
-export default function PostDetail({ post, relatedPosts = [], prevPost = null, nextPost = null }) {
+function SidebarPostLink({ item }) {
+    const thumb = item.media_type === 'video' ? youtubeThumbnailUrl(item.video_url) : item.featured_image;
+    const publishedAt = item.published_at ? new Date(item.published_at).toLocaleDateString('id-ID') : null;
+
+    return (
+        <Link href={postUrl(item)} className="flex gap-3 group">
+            <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100">
+                {thumb ? (
+                    <>
+                        <img src={thumb} alt={item.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                        {item.media_type === 'video' && (
+                            <span className="absolute inset-0 flex items-center justify-center bg-slate-900/35" aria-hidden="true">
+                                <svg className="h-5 w-5 text-white drop-shadow" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                            </span>
+                        )}
+                    </>
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-500 text-xs">-</div>
+                )}
+            </div>
+            <div className="flex flex-col justify-between h-16 min-w-0 py-0.5">
+                <span className="break-words text-sm font-semibold text-slate-800 transition-colors line-clamp-2 leading-snug group-hover:text-primary">
+                    {item.title}
+                </span>
+                <span className="text-xs text-slate-500 line-clamp-1">
+                    {item.category?.name}
+                    {item.category?.name && publishedAt ? ' · ' : ''}
+                    {publishedAt}
+                </span>
+            </div>
+        </Link>
+    );
+}
+
+export default function PostDetail({ post, relatedPosts = [], recentPosts = [], prevPost = null, nextPost = null }) {
     const publishedDate = post.published_at
         ? new Date(post.published_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
         : null;
@@ -376,7 +414,8 @@ export default function PostDetail({ post, relatedPosts = [], prevPost = null, n
                         )}
                     </Reveal>
 
-                    <aside className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-28">
+                    <Reveal as="aside" delay={0.1} className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-28">
+                        
                         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col gap-4 p-5">
                             <span className="font-bold text-slate-800 text-xl">Cari Informasi</span>
                             <form
@@ -404,6 +443,20 @@ export default function PostDetail({ post, relatedPosts = [], prevPost = null, n
                             </form>
                         </div>
 
+                        {recentPosts.length > 0 && (
+                            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col gap-4 p-5">
+                                <div className="flex items-center justify-between">
+                                    <span className="font-bold text-slate-800 text-xl">Postingan Terbaru</span>
+                                    <Link href="/berita" className="text-sm font-bold text-primary hover:underline">Lihat Semua</Link>
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    {recentPosts.map((recent) => (
+                                        <SidebarPostLink key={recent.id} item={recent} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {relatedPosts.length > 0 && (
                             <div className="rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col gap-4 p-5">
                                 <div className="flex items-center justify-between">
@@ -411,37 +464,9 @@ export default function PostDetail({ post, relatedPosts = [], prevPost = null, n
                                     <Link href="/berita" className="text-sm font-bold text-primary hover:underline">Lihat Semua</Link>
                                 </div>
                                 <div className="flex flex-col gap-4">
-                                    {relatedPosts.map((rel) => {
-                                        const relThumb = rel.media_type === 'video' ? youtubeThumbnailUrl(rel.video_url) : rel.featured_image;
-                                        return (
-                                            <Link key={rel.id} href={postUrl(rel)} className="flex gap-3 group">
-                                                <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-slate-100">
-                                                    {relThumb ? (
-                                                        <>
-                                                            <img src={relThumb} alt={rel.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                                                            {rel.media_type === 'video' && (
-                                                                <span className="absolute inset-0 flex items-center justify-center bg-slate-900/35" aria-hidden="true">
-                                                                    <svg className="h-6 w-6 text-white drop-shadow" fill="currentColor" viewBox="0 0 24 24">
-                                                                        <path d="M8 5v14l11-7z" />
-                                                                    </svg>
-                                                                </span>
-                                                            )}
-                                                        </>
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-slate-500 text-xs">-</div>
-                                                    )}
-                                                </div>
-                                                <div className="flex flex-col justify-between h-24 min-w-0 py-1">
-                                                    <span className="break-words text-sm font-semibold text-slate-800 transition-colors line-clamp-3 leading-snug group-hover:text-primary">
-                                                        {rel.title}
-                                                    </span>
-                                                    {rel.published_at && (
-                                                        <span className="text-xs text-slate-500">{new Date(rel.published_at).toLocaleDateString('id-ID')}</span>
-                                                    )}
-                                                </div>
-                                            </Link>
-                                        );
-                                    })}
+                                    {relatedPosts.map((rel) => (
+                                        <SidebarPostLink key={rel.id} item={rel} />
+                                    ))}
                                 </div>
                             </div>
                         )}
@@ -467,7 +492,7 @@ export default function PostDetail({ post, relatedPosts = [], prevPost = null, n
                                 )}
                             </div>
                         )}
-                    </aside>
+                    </Reveal>
                 </div>
             </div>
         </PublicLayout>

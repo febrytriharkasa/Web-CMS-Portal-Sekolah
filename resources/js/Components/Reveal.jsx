@@ -1,66 +1,96 @@
-import { motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 
-const defaults = { opacity: 0, y: 24 };
+const VISIBILITY_FALLBACK_MS = 1500;
 
-export function Reveal({
-    children,
-    className,
-    delay = 0,
-    duration = 0.5,
-    y = defaults.y,
-    once = true,
-    as = 'div',
-    ...rest
-}) {
-    const reduce = useReducedMotion();
-    const Component = motion[as] || motion.div;
+function isOnScreen(node) {
+    if (!node) return false;
+    const rect = node.getBoundingClientRect();
+    return rect.bottom > 0 && rect.top < window.innerHeight;
+}
 
-    if (reduce) {
-        return <Component className={className} {...rest}>{children}</Component>;
-    }
+function useVisibleOnce({ once = true, margin = '-40px' } = {}) {
+    const ref = useRef(null);
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        const node = ref.current;
+
+        if (!node || typeof IntersectionObserver === 'undefined') {
+            setVisible(true);
+            return undefined;
+        }
+
+        let shown = false;
+        const reveal = () => {
+            if (shown) return;
+            shown = true;
+            setVisible(true);
+        };
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    reveal();
+                    if (once) observer.disconnect();
+                } else if (!once) {
+                    shown = false;
+                    setVisible(false);
+                }
+            },
+            { rootMargin: margin },
+        );
+
+        observer.observe(node);
+
+        /*
+         * Jaring pengaman kalau observer diam (mis. elemen tanpa box).
+         * Wajib cek posisi: tanpa cek ini, semua elemen dipaksa tampil
+         * setelah 1.5s sehingga animasinya habis dimainkan di luar layar.
+         */
+        const fallbackTimer = setTimeout(() => {
+            if (isOnScreen(node)) reveal();
+        }, VISIBILITY_FALLBACK_MS);
+
+        return () => {
+            clearTimeout(fallbackTimer);
+            observer.disconnect();
+        };
+    }, [once, margin]);
+
+    return { ref, visible };
+}
+
+export function Reveal({ children, className = '', delay = 0, duration = 0.5, y = 24, once = true, as: Component = 'div', style, ...rest }) {
+    const { ref, visible } = useVisibleOnce({ once });
 
     return (
         <Component
-            initial={{ opacity: 0, y }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once, margin: '-40px' }}
-            transition={{ duration, delay, ease: 'easeOut' }}
-            className={className}
             {...rest}
+            ref={ref}
+            className={`${className} reveal${visible ? ' is-revealed' : ''}`.trim()}
+            style={{
+                '--reveal-delay': `${delay}s`,
+                '--reveal-duration': `${duration}s`,
+                '--reveal-y': `${y}px`,
+                ...style,
+            }}
         >
             {children}
         </Component>
     );
 }
 
-export function StaggerContainer({
-    children,
-    className,
-    stagger = 0.08,
-    once = true,
-    ...rest
-}) {
-    const reduce = useReducedMotion();
-
-    if (reduce) {
-        return <motion.div className={className} {...rest}>{children}</motion.div>;
-    }
+export function StaggerContainer({ children, className = '', stagger = 0.08, once = true, style, ...rest }) {
+    const { ref, visible } = useVisibleOnce({ once });
 
     return (
-        <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once, margin: '-40px' }}
-            variants={{ visible: { transition: { staggerChildren: stagger } } }}
-            className={className}
+        <div
             {...rest}
+            ref={ref}
+            className={`${className}${visible ? ' is-revealed' : ''}`.trim()}
+            style={{ '--stagger-step': `${stagger}s`, ...style }}
         >
             {children}
-        </motion.div>
+        </div>
     );
 }
-
-export const staggerItem = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
-};

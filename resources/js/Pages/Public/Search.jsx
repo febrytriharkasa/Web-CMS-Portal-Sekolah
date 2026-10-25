@@ -3,13 +3,11 @@ import Seo from '@/Components/Seo';
 import Card from '@/Components/Card';
 import Breadcrumbs from '@/Components/Breadcrumbs';
 import Pagination from '@/Components/Pagination';
-import ChatWidget from '@/Components/ChatWidget';
 import { Link, router } from '@inertiajs/react';
 import { useState, lazy, Suspense } from 'react';
 import { youtubeThumbnailUrl } from '@/lib/postBlocks';
 import { postUrl } from '@/lib/postUrl';
-import { motion } from 'framer-motion';
-import { StaggerContainer, staggerItem, Reveal } from '@/Components/Reveal';
+import { StaggerContainer, Reveal } from '@/Components/Reveal';
 
 const MediaPreviewModal = lazy(() => import('@/Components/MediaPreviewModal'));
 
@@ -17,7 +15,7 @@ function MediaCard({ item, onPreview }) {
     const thumb = item.media_type === 'video' && item.video_url ? youtubeThumbnailUrl(item.video_url) : item.featured_image;
     const hasMedia = item.media_type === 'video' ? Boolean(item.video_url) : Boolean(item.featured_image);
     return (
-        <motion.div variants={staggerItem}>
+        <div className="stagger-item">
         <Card key={item.id} className="overflow-hidden group flex flex-col h-full bg-white">
             {hasMedia ? (
                 <button
@@ -67,7 +65,7 @@ function MediaCard({ item, onPreview }) {
                 </Link>
             </div>
         </Card>
-        </motion.div>
+        </div>
     );
 }
 
@@ -75,7 +73,7 @@ function StandardCard({ post }) {
     const thumbnail = post.media_type === 'video' ? youtubeThumbnailUrl(post.video_url) : post.featured_image;
     const hasMedia = post.media_type === 'video' ? Boolean(post.video_url) : Boolean(post.featured_image);
     return (
-        <motion.div variants={staggerItem}>
+        <div className="stagger-item">
         <Card key={post.id} hover className="flex flex-col overflow-hidden h-full">
             {hasMedia ? (
                 <Link href={postUrl(post)} className="block shrink-0">
@@ -122,12 +120,9 @@ function StandardCard({ post }) {
                         </p>
                     )}
                 </div>
-                <Link href={postUrl(post)} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-bold text-primary transition hover:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                    Baca selengkapnya <span aria-hidden="true">→</span>
-                </Link>
             </div>
         </Card>
-        </motion.div>
+        </div>
     );
 }
 
@@ -201,7 +196,7 @@ export default function Search({ keyword = '', items, pages = [], staff = [], co
                                     </h2>
                                     <StaggerContainer className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                                         {pages.map((page) => (
-                                            <motion.div key={page.slug} variants={staggerItem}>
+                                            <div key={page.slug} className="stagger-item">
                                             <Link
                                                 href={`/${page.slug}`}
                                                 className="group rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -213,7 +208,7 @@ export default function Search({ keyword = '', items, pages = [], staff = [], co
                                                     <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-600">{page.excerpt}</p>
                                                 )}
                                             </Link>
-                                            </motion.div>
+                                            </div>
                                         ))}
                                     </StaggerContainer>
                                 </section>
@@ -226,7 +221,7 @@ export default function Search({ keyword = '', items, pages = [], staff = [], co
                                     </h2>
                                     <StaggerContainer className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                                         {staff.map((person) => (
-                                            <motion.div key={person.id} variants={staggerItem}>
+                                            <div key={person.id} className="stagger-item">
                                             <Link
                                                 href="/guru-tendik"
                                                 className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -239,7 +234,7 @@ export default function Search({ keyword = '', items, pages = [], staff = [], co
                                                     <span className="block truncate text-xs text-slate-600">{person.role}</span>
                                                 </span>
                                             </Link>
-                                            </motion.div>
+                                            </div>
                                         ))}
                                     </StaggerContainer>
                                 </section>
@@ -311,10 +306,11 @@ export default function Search({ keyword = '', items, pages = [], staff = [], co
                 </div>
             </section>
 
-            <ChatWidget />
-            <Suspense fallback={null}>
-                <MediaPreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
-            </Suspense>
+            {previewItem && (
+                <Suspense fallback={null}>
+                    <MediaPreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
+                </Suspense>
+            )}
         </PublicLayout>
     );
 }

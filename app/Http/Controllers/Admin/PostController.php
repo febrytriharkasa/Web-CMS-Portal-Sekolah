@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Post;
 use App\Support\ImageOptimizer;
+use App\Support\UploadSecurity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -301,6 +302,13 @@ class PostController extends Controller
     private function handleAttachmentUpload(Request $request, array $metadata): array
     {
         $file = $request->file('attachment_file');
+
+        try {
+            UploadSecurity::assertClean($file);
+        } catch (\RuntimeException $e) {
+            throw ValidationException::withMessages(['attachment_file' => $e->getMessage()]);
+        }
+
         $originalName = $file->getClientOriginalName();
         $storedPath = $file->store('attachments', 'public');
         $url = Storage::url($storedPath);

@@ -90,6 +90,9 @@ class DatabaseSeeder extends Seeder
             ['key' => 'total_teachers',  'value' => '45',                                                      'type' => 'text',  'group_name' => 'statistics'],
             ['key' => 'total_staff',     'value' => '18',                                                      'type' => 'text',  'group_name' => 'statistics'],
             ['key' => 'year_founded',    'value' => '1978',                                                    'type' => 'text',  'group_name' => 'statistics'],
+            ['key' => 'chat_enabled',          'value' => '1',                        'type' => 'boolean', 'group_name' => 'features'],
+            ['key' => 'chat_assistant_name',   'value' => 'SMA XYZ Virtual Assistant', 'type' => 'text',   'group_name' => 'features'],
+            ['key' => 'chat_greeting',         'value' => "Assalamu'alaikum! Saya {name}, asisten virtual {site_name}. Ada yang bisa kami bantu seputar pendaftaran PPDB atau informasi sekolah?", 'type' => 'text', 'group_name' => 'features'],
         ];
         foreach ($settings as $s) {
             SiteSetting::updateOrCreate(['key' => $s['key']], $s);

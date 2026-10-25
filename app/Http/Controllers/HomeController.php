@@ -65,7 +65,7 @@ class HomeController extends Controller
                         return $section;
                     })->toArray(),
                     'galleries' => $galleries->toArray(),
-                    'staff' => Staff::latest()->take(8)->get()->toArray(),
+                    'staff' => Staff::latest()->take(8)->get(['id', 'name', 'role', 'type', 'photo'])->toArray(),
                 ];
             },
         );
@@ -138,6 +138,42 @@ class HomeController extends Controller
         return Inertia::render('Public/Archive', ['title' => 'Berita', 'type' => 'berita', 'previewMode' => 'standard', 'items' => $posts]);
     }
 
+    public function staffArchive(Request $request)
+    {
+        $type = in_array($request->query('type'), ['guru', 'tendik', 'gtk'], true)
+            ? $request->query('type') : null;
+
+        $items = Staff::query()
+            ->when($type, fn ($query) => $query->where('type', $type))
+            ->orderBy('name')
+            ->paginate(8)
+            ->withQueryString();
+
+        $counts = Staff::selectRaw('type, COUNT(*) as total')
+            ->groupBy('type')
+            ->pluck('total', 'type');
+
+        return Inertia::render('Public/StaffArchive', [
+            'title' => 'Guru dan Tenaga Kependidikan',
+            'type' => $type,
+            'counts' => [
+                'all' => (int) $counts->sum(),
+                'guru' => (int) ($counts['guru'] ?? 0),
+                'tendik' => (int) ($counts['tendik'] ?? 0),
+                'gtk' => (int) ($counts['gtk'] ?? 0),
+            ],
+            'items' => $items,
+        ]);
+    }
+
+    public function staffDetail(Staff $staff)
+    {
+        return Inertia::render('Public/StaffDetail', [
+            'title' => $staff->name,
+            'staffMember' => $staff,
+        ]);
+    }
+
     public function search(Request $request)
     {
         $keyword = trim((string) $request->query('q', ''));
@@ -187,7 +223,7 @@ class HomeController extends Controller
 
             $staff = $staffQuery->orderBy('name')
                 ->limit(8)
-                ->get(['id', 'name', 'role', 'type']);
+                ->get(['id', 'name', 'role', 'type', 'photo']);
         }
 
         return Inertia::render('Public/Search', [
@@ -229,6 +265,14 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
+        $recentPosts = Post::with('category:id,name,slug')
+            ->where('id', '!=', $post->id)
+            ->where('status', 'published')
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->take(5)
+            ->get();
+
         $prevPost = Post::where('category_id', $post->category_id)
             ->where('status', 'published')
             ->where(function ($query) use ($post) {
@@ -261,7 +305,7 @@ class HomeController extends Controller
         $prevPost?->setRelation('category', $category);
         $nextPost?->setRelation('category', $category);
 
-        return Inertia::render('Public/PostDetail', compact('post', 'relatedPosts', 'prevPost', 'nextPost'));
+        return Inertia::render('Public/PostDetail', compact('post', 'relatedPosts', 'recentPosts', 'prevPost', 'nextPost'));
     }
 
     private function categoryPosts(
@@ -297,12 +341,13 @@ class HomeController extends Controller
             ->pluck('total', 'kind');
 
         $items = $base
+            ->with('category:id,slug')
             ->when($media === 'video', fn ($query) => $query->where('media_type', 'video'))
             ->when($media === 'image', fn ($query) => $query->where(
                 fn ($inner) => $inner->where('media_type', 'image')->orWhereNull('media_type')
             ))
             ->latest('published_at')
-            ->paginate(12)
+            ->paginate(8)
             ->withQueryString();
 
         return Inertia::render('Public/Gallery', [

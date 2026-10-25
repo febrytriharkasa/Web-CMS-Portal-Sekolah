@@ -71,6 +71,8 @@ class GalleryRouteTest extends TestCase
             ->where('counts.image', 2)
             ->where('counts.video', 1)
             ->has('items.data', 3)
+            ->where('items.per_page', 8)
+            ->where('items.data.0.category.slug', 'galeri')
         );
     }
 

@@ -48,7 +48,8 @@ export default function Pagination({ links, className = '', variant = 'admin' })
                     <Link
                         key={index}
                         href={link.url}
-                        preserveScroll
+                        preserveScroll={isPublic ? false : true}
+                        onSuccess={isPublic ? () => window.scrollTo({ top: 0, behavior: 'smooth' }) : undefined}
                         aria-current={link.active ? 'page' : undefined}
                         className={`${styles.base} ${link.active ? styles.active : styles.idle}`}
                         dangerouslySetInnerHTML={{ __html: label }}

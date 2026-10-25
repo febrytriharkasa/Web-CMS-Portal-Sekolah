@@ -29,6 +29,11 @@ class ChatBotController extends Controller
             'message' => 'required|string|max:1000',
         ]);
 
+        $message = trim(strip_tags($validated['message']));
+        if ($message === '') {
+            return response()->json(['error' => 'Pesan tidak boleh kosong.'], 422);
+        }
+
         $token = $validated['session_token'] ?? (string) Str::uuid();
 
         $session = ChatSession::firstOrCreate(
@@ -39,11 +44,11 @@ class ChatBotController extends Controller
         ChatMessage::create([
             'chat_session_id' => $session->id,
             'role' => 'user',
-            'content' => $validated['message'],
+            'content' => $message,
             'created_at' => now(),
         ]);
 
-        $reply = $this->responder->respond($session, $validated['message']);
+        $reply = $this->responder->respond($session, $message);
 
         ChatMessage::create([
             'chat_session_id' => $session->id,

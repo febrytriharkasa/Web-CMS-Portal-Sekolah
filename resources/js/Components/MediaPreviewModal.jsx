@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { youtubeThumbnailUrl } from '@/lib/postBlocks';
 
@@ -59,7 +60,13 @@ export default function MediaPreviewModal({
         onIndexChange((activeIndex + offset + list.length) % list.length);
     };
 
-    return (
+    // Modal harus lepas dari PageEnter: transform pada ancestor membuat
+    // `fixed` mengacu ke kotak halaman, bukan viewport.
+    if (typeof document === 'undefined') {
+        return null;
+    }
+
+    return createPortal(
         <AnimatePresence>
             {current && (
                 <motion.div
@@ -159,6 +166,7 @@ export default function MediaPreviewModal({
                 </motion.div>
             </motion.div>
         )}
-    </AnimatePresence>
-);
-} // nb: closing for </AnimatePresence>
+        </AnimatePresence>,
+        document.body,
+    );
+}

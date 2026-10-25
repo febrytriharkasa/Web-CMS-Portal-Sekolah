@@ -3,14 +3,12 @@ import Seo from '@/Components/Seo';
 import Card from '@/Components/Card';
 import Breadcrumbs from '@/Components/Breadcrumbs';
 import Pagination from '@/Components/Pagination';
-import ChatWidget from '@/Components/ChatWidget';
 import { Link, usePage } from '@inertiajs/react';
 import { useState, useRef, lazy, Suspense } from 'react';
 import { plainText } from '@/lib/content';
 import { youtubeThumbnailUrl } from '@/lib/postBlocks';
 import { postUrl } from '@/lib/postUrl';
-import { motion } from 'framer-motion';
-import { StaggerContainer, staggerItem, Reveal } from '@/Components/Reveal';
+import { StaggerContainer, Reveal } from '@/Components/Reveal';
 
 const MediaPreviewModal = lazy(() => import('@/Components/MediaPreviewModal'));
 import { HorizontalRail } from '@/Pages/Welcome';
@@ -28,7 +26,7 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                     {items.data.map((post) => {
                         const attachment = post.metadata?.attachments?.[0];
                         return (
-                            <motion.div key={post.id} variants={staggerItem}>
+                            <div key={post.id} className="stagger-item">
                             <Card className="p-5 sm:p-6">
                                 <Link href={postUrl(post)} className="block group">
                                     <h3 className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors">
@@ -56,7 +54,7 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                                     </div>
                                 )}
                             </Card>
-                            </motion.div>
+                            </div>
                         );
                     })}
                 </StaggerContainer>
@@ -69,7 +67,7 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                     {items.data.map((item) => {
                         const thumb = item.media_type === 'video' && item.video_url ? youtubeThumbnailUrl(item.video_url) : item.featured_image;
                         return (
-                            <motion.div key={item.id} variants={staggerItem}>
+                            <div key={item.id} className="stagger-item">
                             <Card className="overflow-hidden group flex flex-col h-full bg-white">
                                 <button
                                     type="button"
@@ -111,7 +109,7 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                                     </Link>
                                 </div>
                             </Card>
-                            </motion.div>
+                            </div>
                         );
                     })}
                 </StaggerContainer>
@@ -124,52 +122,32 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                     
                     {items.data.map((post) => {
                         const thumbnail = post.media_type === 'video' ? youtubeThumbnailUrl(post.video_url) : post.featured_image;
-                        const hasMedia = post.media_type === 'video' ? Boolean(post.video_url) : Boolean(post.featured_image);
                         return (
-                            <motion.div key={post.id} variants={staggerItem}>
+                            <div key={post.id} className="stagger-item">
                             <Card hover className="flex flex-col overflow-hidden h-full">
-                                {hasMedia ? (
-                                    <button
-                                        type="button"
-                                        onClick={() => setPreviewItem(post)}
-                                        className="block shrink-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-zoom-in"
-                                        aria-label={`Preview: ${post.title}`}
-                                    >
-                                        <div className="relative aspect-[16/10] overflow-hidden bg-slate-100 flex items-center justify-center group">
-                                            {thumbnail ? (
-                                                <div className="relative h-full w-full">
-                                                    <img
-                                                        src={thumbnail}
-                                                        alt={post.title}
-                                                        loading="lazy" decoding="async"
-                                                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                                    />
-                                                    {post.media_type === 'video' ? (
-                                                        <span className="absolute inset-0 flex items-center justify-center bg-slate-900/35" aria-hidden="true">
-                                                            <svg className="h-9 w-9 text-white drop-shadow" fill="currentColor" viewBox="0 0 24 24">
-                                                                <path d="M8 5v14l11-7z" />
-                                                            </svg>
-                                                        </span>
-                                                    ) : (
-                                                        <span className="absolute bottom-2 right-2 rounded-md bg-slate-900/60 p-1.5 text-white opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true">
-                                                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16zm-3-8h6m-3-3v6" />
-                                                            </svg>
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <span className="text-xs text-slate-500 font-medium">Gambar tidak tersedia</span>
-                                            )}
-                                        </div>
-                                    </button>
-                                ) : (
-                                    <Link href={postUrl(post)} className="block shrink-0">
-                                        <div className="relative aspect-[16/10] overflow-hidden bg-slate-100 flex items-center justify-center">
+                                <Link href={postUrl(post)} className="block shrink-0">
+                                    <div className="relative aspect-[16/10] overflow-hidden bg-slate-100 flex items-center justify-center group">
+                                        {thumbnail ? (
+                                            <div className="relative h-full w-full">
+                                                <img
+                                                    src={thumbnail}
+                                                    alt={post.title}
+                                                    loading="lazy" decoding="async"
+                                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                                {post.media_type === 'video' && (
+                                                    <span className="absolute inset-0 flex items-center justify-center bg-slate-900/35" aria-hidden="true">
+                                                        <svg className="h-9 w-9 text-white drop-shadow" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M8 5v14l11-7z" />
+                                                        </svg>
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ) : (
                                             <span className="text-xs text-slate-500 font-medium">Gambar tidak tersedia</span>
-                                        </div>
-                                    </Link>
-                                )}
+                                        )}
+                                    </div>
+                                </Link>
                                 <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
                                     <div>
                                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600">
@@ -187,12 +165,9 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                                             </p>
                                         )}
                                     </div>
-                                    <Link href={postUrl(post)} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-bold text-primary transition hover:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                                        Baca selengkapnya <span aria-hidden="true">→</span>
-                                    </Link>
                                 </div>
                             </Card>
-                            </motion.div>
+                            </div>
                         );
                     })}
                 </StaggerContainer>
@@ -205,7 +180,7 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                     {items.data.map((agenda) => {
                         const dateVal = agenda.metadata?.event_date || agenda.metadata?.tanggal_agenda || agenda.published_at;
                         return (
-                            <motion.div key={agenda.id} variants={staggerItem}>
+                            <div key={agenda.id} className="stagger-item">
                             <Card hover className="flex flex-col overflow-hidden h-full">
                                 <Link href={postUrl(agenda)} className="block shrink-0">
                                     <div className="relative aspect-[16/9] w-full bg-slate-100 flex items-center justify-center">
@@ -228,12 +203,9 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                                             <Link href={postUrl(agenda)} className="hover:text-primary">{agenda.title}</Link>
                                         </h3>
                                     </div>
-                                    <Link href={postUrl(agenda)} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-bold text-primary transition hover:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                                        Baca selengkapnya <span aria-hidden="true">→</span>
-                                    </Link>
                                 </div>
                             </Card>
-                            </motion.div>
+                            </div>
                         );
                     })}
                 </StaggerContainer>
@@ -244,7 +216,7 @@ export default function Archive({ title, type, previewMode = 'standard', items }
             return (
                 <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                     {items.data.map((ach) => (
-                        <motion.div key={ach.id} variants={staggerItem}>
+                        <div key={ach.id} className="stagger-item">
                         <Card hover className="overflow-hidden flex flex-col h-full">
                             <Link href={postUrl(ach)} className="block shrink-0">
                                 <div className="relative aspect-[16/10] w-full bg-slate-100 flex items-center justify-center">
@@ -265,12 +237,9 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                                         <Link href={postUrl(ach)} className="hover:text-primary">{ach.title}</Link>
                                     </h3>
                                 </div>
-                                <Link href={postUrl(ach)} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg text-sm font-bold text-primary transition hover:gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                                    Baca selengkapnya <span aria-hidden="true">→</span>
-                                </Link>
                             </div>
                         </Card>
-                        </motion.div>
+                        </div>
                     ))}
                 </StaggerContainer>
             );
@@ -311,10 +280,11 @@ export default function Archive({ title, type, previewMode = 'standard', items }
                 </div>
             </section>
 
-            <ChatWidget />
-            <Suspense fallback={null}>
-                <MediaPreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
-            </Suspense>
+            {previewItem && (
+                <Suspense fallback={null}>
+                    <MediaPreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
+                </Suspense>
+            )}
         </PublicLayout>
     );
 }

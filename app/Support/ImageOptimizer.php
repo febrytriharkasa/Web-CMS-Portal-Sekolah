@@ -23,11 +23,13 @@ class ImageOptimizer
         string $directory,
         int $maxWidth = 1600,
     ): string {
+        UploadSecurity::assertClean($file);
+
         $source = self::decode($file);
 
         if (! $source) {
             // Vektor, animasi, atau format yang tidak bisa dibaca GD: simpan asli.
-            return $file->store($directory, 'public');
+            return self::storeRaw($file, $directory);
         }
 
         $source = self::autoOrient($source, $file->getPathname());
@@ -42,13 +44,30 @@ class ImageOptimizer
         $encoded = self::encodeWebp($source);
 
         if ($encoded === null) {
-            return $file->store($directory, 'public');
+            return self::storeRaw($file, $directory);
         }
 
         $path = $directory.'/'.bin2hex(random_bytes(20)).'.webp';
         Storage::disk('public')->put($path, $encoded);
 
         return $path;
+    }
+
+    /**
+     * Simpan file apa adanya. SVG dibersihkan dulu supaya tidak ada script aktif.
+     */
+    private static function storeRaw(UploadedFile $file, string $directory): string
+    {
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if ($extension === 'svg') {
+            $path = $directory.'/'.bin2hex(random_bytes(20)).'.svg';
+            Storage::disk('public')->put($path, UploadSecurity::sanitizeSvg((string) $file->get()));
+
+            return $path;
+        }
+
+        return $file->store($directory, 'public');
     }
 
     /**
