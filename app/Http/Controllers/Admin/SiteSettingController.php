@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Page;
 use App\Models\SiteSetting;
+use App\Support\GoogleAnalytics;
 use App\Support\ImageOptimizer;
 use App\Support\PublicCache;
 use Illuminate\Http\Request;
@@ -138,6 +139,31 @@ class SiteSettingController extends Controller
             'total_teachers' => 'nullable|string|max:50',
             'total_staff' => 'nullable|string|max:50',
             'year_founded' => 'nullable|string|max:20',
+        ]);
+
+        $this->saveSettings($data);
+
+        return redirect()->back();
+    }
+
+    public function analytics()
+    {
+        $settings = SiteSetting::allCached()->groupBy('group_name');
+
+        return Inertia::render('Admin/Settings/Analytics', [
+            'groupedSettings' => $settings,
+            'report' => GoogleAnalytics::make(SiteSetting::getVal('google_analytics_property_id'))?->summary(),
+        ]);
+    }
+
+    public function updateAnalytics(Request $request)
+    {
+        $data = $request->validate([
+            'google_analytics_id' => ['nullable', 'string', 'max:32', 'regex:/^(G-[A-Za-z0-9]{6,})?$/'],
+            'google_analytics_property_id' => ['nullable', 'string', 'max:20', 'regex:/^(\d{4,})?$/'],
+        ], [
+            'google_analytics_id.regex' => 'Format Measurement ID harus seperti G-XXXXXXXXXX.',
+            'google_analytics_property_id.regex' => 'ID properti hanya berisi angka, lihat di GA4 Admin > Property Settings.',
         ]);
 
         $this->saveSettings($data);

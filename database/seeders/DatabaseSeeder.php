@@ -93,6 +93,7 @@ class DatabaseSeeder extends Seeder
             ['key' => 'chat_enabled',          'value' => '1',                        'type' => 'boolean', 'group_name' => 'features'],
             ['key' => 'chat_assistant_name',   'value' => 'SMA XYZ Virtual Assistant', 'type' => 'text',   'group_name' => 'features'],
             ['key' => 'chat_greeting',         'value' => "Assalamu'alaikum! Saya {name}, asisten virtual {site_name}. Ada yang bisa kami bantu seputar pendaftaran PPDB atau informasi sekolah?", 'type' => 'text', 'group_name' => 'features'],
+            ['key' => 'google_analytics_id',   'value' => '', 'type' => 'text', 'group_name' => 'analytics'],
         ];
         foreach ($settings as $s) {
             SiteSetting::updateOrCreate(['key' => $s['key']], $s);

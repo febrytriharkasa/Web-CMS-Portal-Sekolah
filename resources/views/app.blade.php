@@ -89,6 +89,19 @@
             })();
         </script>
 
+        @php $gaId = trim((string) data_get($settings, 'google_analytics_id')); @endphp
+        @if ($gaId !== '' && app()->environment('production'))
+            {{-- GA4 gtag.js. Page view Inertia SPA ditangkap enhanced measurement,
+                 jadi tidak ada gtag('config') ulang di tiap navigasi. --}}
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag() { dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', @js($gaId));
+            </script>
+        @endif
+
         <!-- Fonts: dimuat tanpa memblokir render; teks langsung tampil dengan font cadangan. -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

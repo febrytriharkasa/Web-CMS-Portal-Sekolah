@@ -35,4 +35,19 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google Analytics Data API
+    |--------------------------------------------------------------------------
+    |
+    | Service account JSON dari Google Cloud (peran Viewer di properti GA4).
+    | Statistik kunjungan di dashboard admin dibaca lewat jalur ini, bukan
+    | lewat Measurement ID yang cuma untuk mengirim data.
+    |
+    */
+
+    'google_analytics' => [
+        'credentials' => env('GOOGLE_ANALYTICS_CREDENTIALS') ?: storage_path('app/private/google-service-account.json'),
+    ],
+
 ];

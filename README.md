@@ -199,6 +199,9 @@ Build aset produksi:
 npm run build
 ```
 
+Checklist konfigurasi dan langkah rilis ke server ada di [`PROD.md`](PROD.md)
+(env wajib, email/SMTP, API chatbot, Google Analytics, backup, cron, HTTPS).
+
 ## Halaman publik dan route
 
 | Route | Keterangan |

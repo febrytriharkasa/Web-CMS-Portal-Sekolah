@@ -95,6 +95,8 @@ Route::middleware(['auth', 'verified', 'active'])->prefix('admin')->name('admin.
     Route::post('/settings/sidebar-cta', [SiteSettingController::class, 'updateSidebarCta'])->middleware('admin')->name('settings.sidebar-cta.update');
     Route::get('/settings/chat', [ChatSettingController::class, 'index'])->middleware('admin')->name('settings.chat');
     Route::post('/settings/chat', [ChatSettingController::class, 'update'])->middleware('admin')->name('settings.chat.update');
+    Route::get('/settings/analytics', [SiteSettingController::class, 'analytics'])->middleware('admin')->name('settings.analytics');
+    Route::post('/settings/analytics', [SiteSettingController::class, 'updateAnalytics'])->middleware('admin')->name('settings.analytics.update');
 
     Route::get('/users', [UserController::class, 'index'])->middleware('superadmin')->name('users.index');
     Route::patch('/users/{user}', [UserController::class, 'update'])->middleware('superadmin')->name('users.update');

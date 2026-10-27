@@ -50,6 +50,16 @@ return [
             'report' => false,
         ],
 
+        // Arsip backup. Sengaja tanpa 'serve' dan di luar public_path supaya
+        // dump database tidak bisa diunduh dari web.
+        'backups' => [
+            'driver' => 'local',
+            'root' => storage_path('app/backups'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

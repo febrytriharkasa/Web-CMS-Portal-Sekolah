@@ -4,6 +4,7 @@ use App\Models\ChatMessage;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -25,3 +26,11 @@ Artisan::command('chat:encrypt-messages', function () {
 
     $this->info("{$count} pesan chat dienkripsi.");
 })->purpose('Enkripsi isi chat_messages yang masih plaintext');
+
+/*
+ * Backup harian: dump database + storage/app/public ke disk "backups".
+ * Butuh cron server: * * * * * php artisan schedule:run
+ */
+Schedule::command('backup:run')->dailyAt('01:00')->withoutOverlapping();
+Schedule::command('backup:clean')->dailyAt('01:30')->withoutOverlapping();
+Schedule::command('backup:monitor')->dailyAt('02:00')->withoutOverlapping();
