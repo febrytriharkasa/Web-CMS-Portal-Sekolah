@@ -236,6 +236,48 @@ export default function PostDetail({ post, relatedPosts = [], recentPosts = [], 
     const { settings, appUrl = '' } = usePage().props;
     const excerpt = plainText(post.content).slice(0, 160);
 
+    const shareBase = (appUrl || (typeof window !== 'undefined' ? window.location.origin : '')).replace(/\/+$/, '');
+    const shareUrl = absoluteUrl(postUrl(post), shareBase);
+    const [copied, setCopied] = useState(false);
+
+    const copyShareUrl = async () => {
+        let success = false;
+
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(shareUrl);
+                success = true;
+            }
+        } catch {
+            success = false;
+        }
+
+        if (!success) {
+            const textarea = document.createElement('textarea');
+            textarea.value = shareUrl;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+
+            try {
+                textarea.select();
+                success = document.execCommand('copy');
+            } catch {
+                success = false;
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        if (success) {
+            setCopied(true);
+            window.setTimeout(() => setCopied(false), 2000);
+        } else {
+            window.prompt('Salin tautan ini:', shareUrl);
+        }
+    };
+
     const articleLd = {
         '@type': 'NewsArticle',
         headline: post.title,
@@ -379,15 +421,29 @@ export default function PostDetail({ post, relatedPosts = [], recentPosts = [], 
                         <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-50 rounded-2xl p-4">
                             <div className="flex flex-wrap items-center gap-2">
                                 <span className="text-xs font-bold text-slate-600">Bagikan:</span>
-                                {[['WhatsApp', '#'], ['Facebook', '#'], ['Salin Tautan', '#']].map(([label, href]) => (
-                                    <a
-                                        key={label}
-                                        href={href}
-                                        className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-primary hover:text-white hover:border-primary transition-colors text-slate-700 text-xs font-medium shadow-sm"
-                                    >
-                                        {label}
-                                    </a>
-                                ))}
+                                <a
+                                    href={`https://wa.me/?text=${encodeURIComponent(`${post.title} — ${shareUrl}`)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-primary hover:text-white hover:border-primary transition-colors text-slate-700 text-xs font-medium shadow-sm"
+                                >
+                                    WhatsApp
+                                </a>
+                                <a
+                                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-primary hover:text-white hover:border-primary transition-colors text-slate-700 text-xs font-medium shadow-sm"
+                                >
+                                    Facebook
+                                </a>
+                                <button
+                                    type="button"
+                                    onClick={copyShareUrl}
+                                    className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-primary hover:text-white hover:border-primary transition-colors text-slate-700 text-xs font-medium shadow-sm"
+                                >
+                                    {copied ? 'Tersalin ✓' : 'Salin Tautan'}
+                                </button>
                             </div>
                             {post.category && (
                                 <span className="text-xs text-slate-500">#{post.category.name?.replace(/\s/g, '')}</span>
