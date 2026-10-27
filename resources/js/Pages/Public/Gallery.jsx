@@ -101,7 +101,7 @@ export default function Gallery({ title = 'Galeri', items, media = null, counts 
         <PublicLayout>
             <Seo
                 title={title}
-                description={`Kumpulan foto dan video ${title.toLowerCase()} dari SMA Al Islam Krian.`}
+                description={`Kumpulan foto dan video ${title.toLowerCase()} dari SMA XYZ.`}
             />
             <Breadcrumbs items={[{ label: 'Beranda', href: '/' }, { label: title }]} />
 

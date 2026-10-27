@@ -224,7 +224,7 @@ class ChatBotTest extends TestCase
     {
         config(['chatbot.driver' => 'off']);
 
-        SiteSetting::updateOrCreate(['key' => 'social_instagram'], ['value' => 'https://instagram.com/smaliska']);
+        SiteSetting::updateOrCreate(['key' => 'social_instagram'], ['value' => 'https://instagram.com/smaxyz']);
         SiteSetting::updateOrCreate(['key' => 'social_whatsapp'], ['value' => 'https://wa.me/628123456789']);
 
         $response = $this->postJson('/api/chat', ['message' => 'Apa Instagram dan WA sekolah?']);
@@ -232,7 +232,7 @@ class ChatBotTest extends TestCase
         $response->assertOk();
         $reply = $response->json('reply');
 
-        $this->assertStringContainsString('https://instagram.com/smaliska', $reply);
+        $this->assertStringContainsString('https://instagram.com/smaxyz', $reply);
         $this->assertStringContainsString('https://wa.me/628123456789', $reply);
     }
 
@@ -262,11 +262,11 @@ class ChatBotTest extends TestCase
 
     public function test_system_prompt_includes_social_media_links(): void
     {
-        SiteSetting::updateOrCreate(['key' => 'social_instagram'], ['value' => 'https://instagram.com/smaliska']);
+        SiteSetting::updateOrCreate(['key' => 'social_instagram'], ['value' => 'https://instagram.com/smaxyz']);
 
         $prompt = SchoolContext::for('apa instagram sekolah');
 
-        $this->assertStringContainsString('https://instagram.com/smaliska', $prompt);
+        $this->assertStringContainsString('https://instagram.com/smaxyz', $prompt);
     }
 
     private function createBerita(User $user, Category $category, string $title, string $date): Post

@@ -18,14 +18,14 @@ class ChatSettingsTest extends TestCase
 
         $response = $this->actingAs($admin)->post('/admin/settings/chat', [
             'chat_enabled' => true,
-            'chat_assistant_name' => 'Asisten SMALISKA',
+            'chat_assistant_name' => 'Asisten SMA XYZ',
             'chat_greeting' => 'Assalamu alaikum! Saya {name} dari {site_name}.',
         ]);
 
         $response->assertRedirect();
 
         $this->assertSame('1', SiteSetting::where('key', 'chat_enabled')->value('value'));
-        $this->assertSame('Asisten SMALISKA', SiteSetting::where('key', 'chat_assistant_name')->value('value'));
+        $this->assertSame('Asisten SMA XYZ', SiteSetting::where('key', 'chat_assistant_name')->value('value'));
         $this->assertSame('Assalamu alaikum! Saya {name} dari {site_name}.', SiteSetting::where('key', 'chat_greeting')->value('value'));
     }
 
@@ -35,7 +35,7 @@ class ChatSettingsTest extends TestCase
 
         $this->actingAs($admin)->post('/admin/settings/chat', [
             'chat_enabled' => false,
-            'chat_assistant_name' => 'Asisten SMALISKA',
+            'chat_assistant_name' => 'Asisten SMA XYZ',
         ])->assertRedirect();
 
         $this->assertSame('0', SiteSetting::where('key', 'chat_enabled')->value('value'));
@@ -70,11 +70,11 @@ class ChatSettingsTest extends TestCase
 
     public function test_public_pages_share_assistant_name_and_greeting(): void
     {
-        SiteSetting::updateOrCreate(['key' => 'chat_assistant_name'], ['value' => 'Asisten SMALISKA']);
+        SiteSetting::updateOrCreate(['key' => 'chat_assistant_name'], ['value' => 'Asisten SMA XYZ']);
         SiteSetting::updateOrCreate(['key' => 'chat_greeting'], ['value' => 'Halo dari {name}']);
 
         $this->get('/')->assertInertia(fn (Assert $page) => $page
-            ->where('settings.chat_assistant_name', 'Asisten SMALISKA')
+            ->where('settings.chat_assistant_name', 'Asisten SMA XYZ')
             ->where('settings.chat_greeting', 'Halo dari {name}')
         );
     }

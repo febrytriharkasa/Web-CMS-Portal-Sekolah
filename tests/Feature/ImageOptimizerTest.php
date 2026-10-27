@@ -100,7 +100,7 @@ class ImageOptimizerTest extends TestCase
         Storage::fake('public');
 
         $this->actingAs(User::factory()->create())->post('/admin/settings/footer', [
-            'site_name' => 'SMALISKA',
+            'site_name' => 'SMA XYZ',
             'site_logo_file' => UploadedFile::fake()->image('logo.png', 300, 300),
         ])->assertRedirect();
 

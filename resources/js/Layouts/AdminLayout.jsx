@@ -14,7 +14,7 @@ export default function AdminLayout({ children, title }) {
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const userMenuRef = useRef(null);
 
-    const siteName = settings?.site_name || 'SMALISKA';
+    const siteName = settings?.site_name || 'SMA XYZ';
     const siteLogo = settings?.site_logo;
     const user = auth?.user;
     const userName = user?.name || 'Admin';

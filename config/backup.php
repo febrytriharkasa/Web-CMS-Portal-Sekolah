@@ -18,7 +18,7 @@ return [
          * The name of this application. You can use this name to monitor
          * the backups.
          */
-        'name' => env('BACKUP_NAME', 'smaliska'),
+        'name' => env('BACKUP_NAME', 'cms-portal-sekolah'),
 
         'source' => [
             'files' => [
@@ -297,7 +297,7 @@ return [
      */
     'monitor_backups' => [
         [
-            'name' => env('BACKUP_NAME', 'smaliska'),
+            'name' => env('BACKUP_NAME', 'cms-portal-sekolah'),
             'disks' => ['backups'],
             'health_checks' => [
                 MaximumAgeInDays::class => 2,

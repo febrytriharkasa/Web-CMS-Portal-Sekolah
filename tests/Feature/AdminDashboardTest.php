@@ -47,7 +47,7 @@ class AdminDashboardTest extends TestCase
         Page::create(['title' => 'Visi Misi', 'slug' => 'visi-misi', 'is_published' => true]);
         Staff::create(['name' => 'Guru Satu', 'role' => 'Guru Matematika', 'type' => 'guru']);
         Staff::create(['name' => 'Tendik Satu', 'role' => 'Staf TU', 'type' => 'tendik']);
-        SiteSetting::create(['key' => 'site_name', 'value' => 'SMALISKA']);
+        SiteSetting::create(['key' => 'site_name', 'value' => 'SMA XYZ']);
 
         $this->actingAs($admin)->get('/admin/dashboard')
             ->assertOk()
@@ -61,7 +61,7 @@ class AdminDashboardTest extends TestCase
                 ->where('metrics.total_staff', 2)
                 ->where('metrics.total_guru', 1)
                 ->where('metrics.total_tendik', 1)
-                ->where('siteInfo.site_name', 'SMALISKA')
+                ->where('siteInfo.site_name', 'SMA XYZ')
                 ->has('latestPosts', 2)
                 ->has('latestPages', 1)
             );

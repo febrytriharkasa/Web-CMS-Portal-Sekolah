@@ -21,17 +21,17 @@ class SidebarCtaSettingsTest extends TestCase
         $response = $this->actingAs($admin)->post('/admin/settings/sidebar-cta', [
             'sidebar_cta_enabled' => true,
             'sidebar_cta_title' => 'PPDB 2027 / 2028',
-            'sidebar_cta_heading' => 'Bergabung Bersama Generasi Unggul SMALISKA',
+            'sidebar_cta_heading' => 'Bergabung Bersama Generasi Unggul SMA XYZ',
             'sidebar_cta_description' => 'Pendaftaran Gelombang 1 dibuka sampai 30 Juni.',
             'sidebar_cta_button_text' => 'Daftar Sekarang',
-            'sidebar_cta_button_url' => 'https://ppdb.smaliska.sch.id',
+            'sidebar_cta_button_url' => 'https://ppdb.smaxyz.sch.id',
         ]);
 
         $response->assertRedirect();
 
         $this->assertSame('1', SiteSetting::where('key', 'sidebar_cta_enabled')->value('value'));
         $this->assertSame('PPDB 2027 / 2028', SiteSetting::where('key', 'sidebar_cta_title')->value('value'));
-        $this->assertSame('https://ppdb.smaliska.sch.id', SiteSetting::where('key', 'sidebar_cta_button_url')->value('value'));
+        $this->assertSame('https://ppdb.smaxyz.sch.id', SiteSetting::where('key', 'sidebar_cta_button_url')->value('value'));
     }
 
     public function test_disabled_sidebar_cta_is_saved_as_zero(): void
@@ -40,7 +40,7 @@ class SidebarCtaSettingsTest extends TestCase
 
         $this->actingAs($admin)->post('/admin/settings/sidebar-cta', [
             'sidebar_cta_enabled' => false,
-            'sidebar_cta_heading' => 'Bergabung Bersama Generasi Unggul SMALISKA',
+            'sidebar_cta_heading' => 'Bergabung Bersama Generasi Unggul SMA XYZ',
         ])->assertRedirect();
 
         $this->assertSame('0', SiteSetting::where('key', 'sidebar_cta_enabled')->value('value'));
@@ -79,12 +79,12 @@ class SidebarCtaSettingsTest extends TestCase
             'published_at' => now(),
         ]);
 
-        SiteSetting::updateOrCreate(['key' => 'sidebar_cta_heading'], ['value' => 'Bergabung Bersama Generasi Unggul SMALISKA']);
-        SiteSetting::updateOrCreate(['key' => 'sidebar_cta_button_url'], ['value' => 'https://ppdb.smaliska.sch.id']);
+        SiteSetting::updateOrCreate(['key' => 'sidebar_cta_heading'], ['value' => 'Bergabung Bersama Generasi Unggul SMA XYZ']);
+        SiteSetting::updateOrCreate(['key' => 'sidebar_cta_button_url'], ['value' => 'https://ppdb.smaxyz.sch.id']);
 
         $this->get('/berita/judul-berita')->assertInertia(fn (Assert $page) => $page
-            ->where('settings.sidebar_cta_heading', 'Bergabung Bersama Generasi Unggul SMALISKA')
-            ->where('settings.sidebar_cta_button_url', 'https://ppdb.smaliska.sch.id')
+            ->where('settings.sidebar_cta_heading', 'Bergabung Bersama Generasi Unggul SMA XYZ')
+            ->where('settings.sidebar_cta_button_url', 'https://ppdb.smaxyz.sch.id')
         );
     }
 }

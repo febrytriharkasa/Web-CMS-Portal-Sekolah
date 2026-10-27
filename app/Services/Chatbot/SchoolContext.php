@@ -29,7 +29,7 @@ class SchoolContext
             $settings = SiteSetting::pluck('value', 'key');
 
             return [
-                'name' => self::value($settings, 'site_name', 'SMA Al Islam Krian'),
+                'name' => self::value($settings, 'site_name', 'SMA XYZ'),
                 // Tagline diutamakan: footer_about sering dikosongkan admin.
                 'tagline' => self::value($settings, 'site_tagline')
                     ?: self::value($settings, 'footer_about', 'Berakhlak Mulia, Berprestasi Tinggi, Berwawasan Global'),
@@ -42,7 +42,7 @@ class SchoolContext
                 'assistant' => self::value(
                     $settings,
                     'chat_assistant_name',
-                    self::value($settings, 'site_name', 'SMA Al Islam Krian').' Virtual Assistant'
+                    self::value($settings, 'site_name', 'SMA XYZ').' Virtual Assistant'
                 ),
             ];
         });

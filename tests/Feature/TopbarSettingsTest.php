@@ -16,7 +16,7 @@ class TopbarSettingsTest extends TestCase
         $admin = User::factory()->create();
 
         $links = [
-            ['label' => 'Daftar PPDB', 'url' => 'https://ppdb.smaliska.sch.id'],
+            ['label' => 'Daftar PPDB', 'url' => 'https://ppdb.smaxyz.sch.id'],
             ['label' => 'Kalender Akademik', 'url' => '/kalender-akademik'],
         ];
 
@@ -30,7 +30,7 @@ class TopbarSettingsTest extends TestCase
         $saved = json_decode(SiteSetting::where('key', 'topbar_links')->value('value'), true);
         $this->assertCount(2, $saved);
         $this->assertEquals('Daftar PPDB', $saved[0]['label']);
-        $this->assertEquals('https://ppdb.smaliska.sch.id', $saved[0]['url']);
+        $this->assertEquals('https://ppdb.smaxyz.sch.id', $saved[0]['url']);
         $this->assertEquals('/kalender-akademik', $saved[1]['url']);
     }
 

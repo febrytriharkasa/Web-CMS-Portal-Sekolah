@@ -4,10 +4,10 @@
     $pageProps = $page['props'] ?? [];
     $settings = $pageProps['settings'] ?? [];
 
-    $siteName = data_get($settings, 'site_name') ?: config('app.name', 'SMALISKA');
+    $siteName = data_get($settings, 'site_name') ?: config('app.name', 'SMA XYZ');
     $fallbackDescription = data_get($settings, 'footer_about')
         ?: (data_get($settings, 'site_tagline')
-        ?: 'Portal resmi SMA Al Islam Krian (SMALISKA): berita sekolah, agenda, prestasi, galeri kegiatan, profil guru, dan informasi PPDB.');
+        ?: 'Portal resmi SMA XYZ: berita sekolah, agenda, prestasi, galeri kegiatan, profil guru, dan informasi PPDB.');
 
     $component = $page['component'] ?? '';
     $metaTitle = null;

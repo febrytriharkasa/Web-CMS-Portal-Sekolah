@@ -244,7 +244,7 @@ export default function PostDetail({ post, relatedPosts = [], recentPosts = [], 
         ...(post.published_at ? { datePublished: post.published_at } : {}),
         ...(post.updated_at ? { dateModified: post.updated_at } : {}),
         ...(post.category?.name ? { articleSection: post.category.name } : {}),
-        author: { '@type': 'Person', name: post.user?.name || 'Humas SMALISKA' },
+        author: { '@type': 'Person', name: post.user?.name || 'Humas SMA XYZ' },
     };
 
     const sidebarCta = {

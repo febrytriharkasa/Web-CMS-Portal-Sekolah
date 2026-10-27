@@ -81,7 +81,7 @@ export default function SidebarCtaSettings({ groupedSettings, linkOptions }) {
                                 type="text"
                                 value={data.sidebar_cta_heading}
                                 onChange={(e) => setData('sidebar_cta_heading', e.target.value)}
-                                placeholder="Bergabung Bersama Generasi Unggul SMALISKA"
+                                placeholder="Bergabung Bersama Generasi Unggul SMA XYZ"
                                 className="mt-1 block w-full rounded-lg border-slate-300 text-sm focus:border-primary focus:ring-primary"
                             />
                         </div>

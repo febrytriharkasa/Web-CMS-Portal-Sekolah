@@ -7,7 +7,7 @@ import { ThemeProvider } from './Contexts/ThemeContext';
 
 // Nama situs diambil dari pengaturan sekolah saat halaman pertama dimuat, jadi
 // judul tab tidak bergantung pada APP_NAME yang masih "laravel".
-let siteName = import.meta.env.VITE_APP_NAME || 'SMALISKA';
+let siteName = import.meta.env.VITE_APP_NAME || 'SMA XYZ';
 
 // Proteksi InfinityFree: jika request XHR tidak membawa cookie __test, server
 // membalas halaman HTML (bukan JSON Inertia) sehingga Inertia menampilkan modal

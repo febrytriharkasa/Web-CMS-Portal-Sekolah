@@ -1,4 +1,4 @@
-# SMALISKA Web
+# Web CMS Portal Sekolah
 
 Portal sekolah SMA XYZ. Dibangun dengan Laravel, Inertia React, Tailwind CSS, dan MySQL atau SQLite.
 
@@ -48,7 +48,7 @@ composer run setup
 Atur nilai berikut pada `.env`:
 
 ```env
-APP_NAME=SMALISKA
+APP_NAME=SMA XYZ
 APP_ENV=local
 APP_KEY=
 APP_DEBUG=true
@@ -61,7 +61,7 @@ APP_FAKER_LOCALE=id_ID
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=smaliska
+DB_DATABASE=sma_xyz
 DB_USERNAME=root
 DB_PASSWORD=
 
@@ -88,7 +88,7 @@ Pastikan file `database/database.sqlite` tersedia, lalu jalankan migrasi.
 Buat database terlebih dahulu:
 
 ```sql
-CREATE DATABASE smaliska CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE sma_xyz CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 Lalu isi `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` pada `.env`.
@@ -199,9 +199,6 @@ Build aset produksi:
 npm run build
 ```
 
-Checklist konfigurasi dan langkah rilis ke server ada di [`PROD.md`](PROD.md)
-(env wajib, email/SMTP, API chatbot, Google Analytics, backup, cron, HTTPS).
-
 ## Halaman publik dan route
 
 | Route | Keterangan |
@@ -297,7 +294,7 @@ Balasan sukses `200`:
 ```json
 {
   "session_token": "9f1c2b3a-4d5e-6f70-8a9b-0c1d2e3f4a5b",
-  "reply": "Pendaftaran Peserta Didik Baru (PPDB) SMA Al Islam Krian saat ini telah dibuka..."
+  "reply": "Pendaftaran Peserta Didik Baru (PPDB) SMA XYZ saat ini telah dibuka..."
 }
 ```
 

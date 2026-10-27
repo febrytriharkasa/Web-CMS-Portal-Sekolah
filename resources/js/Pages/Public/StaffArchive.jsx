@@ -79,7 +79,7 @@ export default function StaffArchive({ title = 'Guru dan Tenaga Kependidikan', t
         <PublicLayout>
             <Seo
                 title={title}
-                description="Profil pendidik dan tenaga kependidikan berdedikasi SMA Al Islam Krian."
+                description="Profil pendidik dan tenaga kependidikan berdedikasi SMA XYZ."
             />
             <Breadcrumbs items={[{ label: 'Beranda', href: '/' }, { label: title }]} />
 

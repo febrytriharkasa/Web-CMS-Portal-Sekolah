@@ -41,7 +41,7 @@ class DashboardController extends Controller
         $settings = SiteSetting::allCached()->pluck('value', 'key');
 
         $siteInfo = [
-            'site_name' => $settings->get('site_name') ?: 'SMALISKA',
+            'site_name' => $settings->get('site_name') ?: 'SMA XYZ',
             'site_logo' => $settings->get('site_logo'),
         ];
 

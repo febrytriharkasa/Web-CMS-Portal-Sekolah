@@ -325,7 +325,7 @@ export default function Welcome({ settings = {}, posts = [], homeSections = [], 
 
     const organizationLd = {
         '@type': 'EducationalOrganization',
-        name: settings.site_name || 'SMA Al Islam Krian',
+        name: settings.site_name || 'SMA XYZ',
         ...(appUrl ? { url: appUrl } : {}),
         ...(settings.site_logo ? { logo: absoluteUrl(settings.site_logo, appUrl) } : {}),
         ...(settings.footer_about || settings.site_tagline

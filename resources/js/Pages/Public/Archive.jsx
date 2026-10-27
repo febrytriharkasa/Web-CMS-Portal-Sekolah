@@ -17,7 +17,7 @@ export default function Archive({ title, type, previewMode = 'standard', items }
     const { settings = {} } = usePage().props;
     const [previewItem, setPreviewItem] = useState(null);
     const post = items.data?.[0] ?? null;
-    const siteName = settings.site_name || 'SMA Al Islam Krian';
+    const siteName = settings.site_name || 'SMA XYZ';
 
     const renderItems = () => {
         if (type === 'download') {

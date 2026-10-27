@@ -1,7 +1,7 @@
 import { Head, usePage } from '@inertiajs/react';
 
 const FALLBACK_DESCRIPTION =
-    'Portal resmi SMA Al Islam Krian (SMALISKA): berita sekolah, agenda, prestasi, galeri kegiatan, profil guru, dan informasi PPDB.';
+    'Portal resmi SMA XYZ: berita sekolah, agenda, prestasi, galeri kegiatan, profil guru, dan informasi PPDB.';
 
 /**
  * Absolutkan URL `/storage/...` supaya canonical dan og:image valid di crawler.
@@ -45,7 +45,7 @@ export default function Seo({
     const settings = props.settings || {};
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const base = (props.appUrl || origin || '').replace(/\/+$/, '');
-    const siteName = settings.site_name || 'SMA Al Islam Krian';
+    const siteName = settings.site_name || 'SMA XYZ';
 
     const path = (url || '/').split('?')[0];
     const pageParam = new URLSearchParams((url || '').split('?')[1] || '').get('page');
