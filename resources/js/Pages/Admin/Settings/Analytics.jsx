@@ -57,24 +57,50 @@ function SetupGuide() {
         <Card className="p-6">
             <h3 className="text-base font-bold text-slate-800">Laporan belum aktif</h3>
             <p className="mt-1 text-sm text-slate-600">
-                Agar angka kunjungan muncul di halaman ini, siapkan kredensial baca GA4:
+                Isi dua kolom di bawah dengan nilai dari GA4. Keduanya diambil dari menu yang berbeda.
             </p>
-            <ol className="mt-4 space-y-2 text-sm text-slate-600">
+
+            <h4 className="mt-4 text-sm font-bold text-slate-800">Measurement ID (berawalan G-)</h4>
+            <ol className="mt-2 space-y-1.5 text-sm text-slate-600">
                 <li>
-                    1. Di Google Cloud Console, buat Service Account, lalu aktifkan <span className="font-medium">Google Analytics Data API</span>.
+                    1. Buka{' '}
+                    <a
+                        href="https://analytics.google.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-primary hover:underline"
+                    >
+                        GA4
+                    </a>
+                    , lalu klik <span className="font-medium">Admin</span> (ikon roda gigi di kiri bawah).
                 </li>
                 <li>
-                    2. Buat key JSON untuk service account itu, simpan di{' '}
-                    <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">storage/app/private/google-service-account.json</code>
-                    {' '}atau tunjuk path lain lewat <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">GOOGLE_ANALYTICS_CREDENTIALS</code> di file <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">.env</code>.
+                    2. Di bagian <span className="font-medium">Property</span>, pilih <span className="font-medium">Data Streams</span>.
                 </li>
                 <li>
-                    3. Di GA4, buka <span className="font-medium">Admin &gt; Property Access Management</span> dan tambahkan email service account dengan peran Viewer.
+                    3. Klik stream web yang dipakai website sekolah.
                 </li>
                 <li>
-                    4. Isi ID properti pada kolom di atas. Angka ini ada di GA4 <span className="font-medium">Admin &gt; Property Settings</span>, bukan yang berawalan G-.
+                    4. Measurement ID ada di kanan atas halaman, bentuknya seperti <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">G-XXXXXXXXXX</code>.
                 </li>
             </ol>
+
+            <h4 className="mt-4 text-sm font-bold text-slate-800">ID Properti (hanya angka)</h4>
+            <ol className="mt-2 space-y-1.5 text-sm text-slate-600">
+                <li>
+                    1. Masih di GA4, buka <span className="font-medium">Admin</span>.
+                </li>
+                <li>
+                    2. Di bagian <span className="font-medium">Property</span>, pilih <span className="font-medium">Property Settings</span>.
+                </li>
+                <li>
+                    3. Property ID ada di bagian atas halaman, bentuknya deretan angka seperti <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">123456789</code>.
+                </li>
+            </ol>
+
+            <p className="mt-4 text-sm text-slate-600">
+                Tempel kedua nilai di kolom bawah, lalu klik Simpan Pengaturan. Kalau laporan masih kosong, minta admin GA4 memberi akses baca ke email service account aplikasi.
+            </p>
         </Card>
     );
 }
