@@ -105,7 +105,7 @@ function SetupGuide() {
     );
 }
 
-export default function AnalyticsSettings({ groupedSettings, report }) {
+export default function AnalyticsSettings({ groupedSettings, report, realtime }) {
     const rawSettings = Object.values(groupedSettings).flat().reduce((acc, curr) => {
         acc[curr.key] = curr.value;
         return acc;
@@ -124,7 +124,34 @@ export default function AnalyticsSettings({ groupedSettings, report }) {
     return (
         <AdminLayout title="Analitik Google">
             <section className="max-w-5xl">
-                <h2 className="mb-4 text-lg font-bold text-slate-900">Laporan {report?.days ?? 28} Hari Terakhir</h2>
+                <h2 className="mb-4 text-lg font-bold text-slate-900">Pengunjung Saat Ini</h2>
+
+                {!realtime && <SetupGuide />}
+
+                {realtime && !realtime.ok && (
+                    <Card className="border-amber-200 p-6">
+                        <h3 className="text-base font-bold text-slate-800">Data realtime gagal diambil</h3>
+                        <p className="mt-1 text-sm text-slate-600">
+                            Angka pengunjung saat ini belum tersedia. Laporan 28 hari di bawah tetap bisa dipakai.
+                        </p>
+                        <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700 break-words">{realtime.error}</p>
+                    </Card>
+                )}
+
+                {realtime?.ok && (
+                    <div className="grid grid-cols-2 gap-4">
+                        <Card className="p-4">
+                            <p className="text-2xl font-extrabold text-slate-800">{(realtime.active_30m ?? 0).toLocaleString('id-ID')}</p>
+                            <p className="mt-1 text-sm text-slate-500">Pengguna aktif 30 menit terakhir</p>
+                        </Card>
+                        <Card className="p-4">
+                            <p className="text-2xl font-extrabold text-slate-800">{(realtime.active_5m ?? 0).toLocaleString('id-ID')}</p>
+                            <p className="mt-1 text-sm text-slate-500">Pengguna aktif 5 menit terakhir</p>
+                        </Card>
+                    </div>
+                )}
+
+                <h2 className="mb-4 mt-10 text-lg font-bold text-slate-900">Laporan {report?.days ?? 28} Hari Terakhir</h2>
 
                 {!report && <SetupGuide />}
 

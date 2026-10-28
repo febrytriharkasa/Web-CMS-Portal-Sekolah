@@ -21,7 +21,11 @@ class GoogleAnalytics
 
     private const REPORT_URL = 'https://analyticsdata.googleapis.com/v1beta/%s:batchRunReports';
 
+    private const REALTIME_URL = 'https://analyticsdata.googleapis.com/v1beta/%s:runRealtimeReport';
+
     private const REPORT_TTL_HOURS = 6;
+
+    private const REALTIME_TTL_SECONDS = 60;
 
     private const RANGE_DAYS = 28;
 
@@ -89,6 +93,56 @@ class GoogleAnalytics
         Cache::put($key, $result, now()->addHours(self::REPORT_TTL_HOURS));
 
         return $result;
+    }
+
+    /**
+     * Pengunjung aktif 30 dan 5 menit terakhir, dibaca dari laporan realtime
+     * Google (muncul detik itu juga, tidak seperti laporan biasa yang telat).
+     * Di-cache 60 detik supaya halaman admin tidak menembak API tiap dibuka.
+     *
+     * @return array<string, mixed>
+     */
+    public function realtime(): array
+    {
+        $key = 'ga4:realtime:'.$this->propertyId;
+
+        $cached = Cache::get($key);
+
+        if (is_array($cached)) {
+            return $cached;
+        }
+
+        try {
+            $result = ['ok' => true, 'error' => null] + [
+                'active_30m' => $this->activeUsers(29),
+                'active_5m' => $this->activeUsers(4),
+            ];
+        } catch (\Throwable $e) {
+            report($e);
+
+            return ['ok' => false, 'error' => $e->getMessage()];
+        }
+
+        Cache::put($key, $result, now()->addSeconds(self::REALTIME_TTL_SECONDS));
+
+        return $result;
+    }
+
+    private function activeUsers(int $minutesAgo): int
+    {
+        $response = Http::withToken($this->accessToken())
+            ->acceptJson()
+            ->timeout(20)
+            ->post(sprintf(self::REALTIME_URL, 'properties/'.$this->propertyId), [
+                'metrics' => [['name' => 'activeUsers']],
+                'minuteRanges' => [['startMinutesAgo' => $minutesAgo, 'endMinutesAgo' => 0]],
+            ]);
+
+        if ($response->failed()) {
+            throw new RuntimeException('GA4 menolak permintaan realtime: '.$response->status().' '.$response->body());
+        }
+
+        return (int) ($response->json('rows.0.metricValues.0.value') ?? 0);
     }
 
     /**

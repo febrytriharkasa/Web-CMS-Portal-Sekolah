@@ -153,6 +153,7 @@ class SiteSettingController extends Controller
         return Inertia::render('Admin/Settings/Analytics', [
             'groupedSettings' => $settings,
             'report' => GoogleAnalytics::make(SiteSetting::getVal('google_analytics_property_id'))?->summary(),
+            'realtime' => GoogleAnalytics::make(SiteSetting::getVal('google_analytics_property_id'))?->realtime(),
         ]);
     }
 
