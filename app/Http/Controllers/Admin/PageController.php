@@ -212,7 +212,7 @@ class PageController extends Controller
 
     private function uniqueSlug(string $title): string
     {
-        $base = Str::slug($title);
+        $base = 'halaman-'. Str::slug($title);
         $slug = $base;
         $index = 1;
         while (Page::where('slug', $slug)->exists()) {
