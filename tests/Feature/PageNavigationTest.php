@@ -18,18 +18,18 @@ class PageNavigationTest extends TestCase
         $this->seedNav([['type' => 'single', 'label' => 'Beranda', 'url' => '/']]);
 
         $this->actingAs(User::factory()->create())->post('/admin/pages', [
-            'title' => 'Visi Misi',
-            'content' => 'Visi misi sekolah.',
+            'title' => 'Visi, Misi dan Tujuan',
+            'content' => 'Visi, Misi dan Tujuan sekolah.',
             'is_published' => true,
             'nav_placement' => 'top',
-            'nav_label' => 'Visi & Misi',
+            'nav_label' => 'Visi, Misi dan Tujuan',
         ])->assertRedirect(route('admin.pages.index'));
 
         $items = $this->navItems();
 
         $this->assertCount(2, $items);
-        $this->assertSame('Visi & Misi', $items[1]['label']);
-        $this->assertSame('/visi-misi', $items[1]['url']);
+        $this->assertSame('Visi, Misi dan Tujuan', $items[1]['label']);
+        $this->assertSame('/halaman-visi-misi-dan-tujuan', $items[1]['url']);
         $this->assertSame('single', $items[1]['type']);
     }
 
@@ -38,13 +38,13 @@ class PageNavigationTest extends TestCase
         $this->seedNav([]);
 
         $this->actingAs(User::factory()->create())->post('/admin/pages', [
-            'title' => 'Visi Misi',
-            'content' => 'Visi misi sekolah.',
+            'title' => 'Visi, Misi dan Tujuan',
+            'content' => 'Visi, Misi dan Tujuan sekolah.',
             'is_published' => true,
             'nav_placement' => 'top',
         ])->assertRedirect(route('admin.pages.index'));
 
-        $this->assertSame('Visi Misi', $this->navItems()[0]['label']);
+        $this->assertSame('Visi, Misi dan Tujuan', $this->navItems()[0]['label']);
     }
 
     public function test_page_can_be_placed_inside_existing_dropdown(): void
@@ -59,8 +59,8 @@ class PageNavigationTest extends TestCase
         ]);
 
         $this->actingAs(User::factory()->create())->post('/admin/pages', [
-            'title' => 'Visi Misi',
-            'content' => 'Visi misi sekolah.',
+            'title' => 'Visi, Misi dan Tujuan',
+            'content' => 'Visi, Misi dan Tujuan sekolah.',
             'is_published' => true,
             'nav_placement' => 'dropdown',
             'nav_parent_label' => 'Tentang Kami',
@@ -71,8 +71,8 @@ class PageNavigationTest extends TestCase
         $this->assertCount(2, $items);
         $this->assertCount(2, $items[1]['children']);
         $this->assertSame('Sejarah', $items[1]['children'][0]['label']);
-        $this->assertSame('Visi Misi', $items[1]['children'][1]['label']);
-        $this->assertSame('/visi-misi', $items[1]['children'][1]['url']);
+        $this->assertSame('Visi, Misi dan Tujuan', $items[1]['children'][1]['label']);
+        $this->assertSame('/halaman-visi-misi-dan-tujuan', $items[1]['children'][1]['url']);
     }
 
     public function test_dropdown_placement_fails_when_dropdown_is_gone(): void
@@ -80,8 +80,8 @@ class PageNavigationTest extends TestCase
         $this->seedNav([['type' => 'single', 'label' => 'Beranda', 'url' => '/']]);
 
         $this->actingAs(User::factory()->create())->post('/admin/pages', [
-            'title' => 'Visi Misi',
-            'content' => 'Visi misi sekolah.',
+            'title' => 'Visi, Misi dan Tujuan',
+            'content' => 'Visi, Misi dan Tujuan sekolah.',
             'is_published' => true,
             'nav_placement' => 'dropdown',
             'nav_parent_label' => 'Tentang Kami',
@@ -97,11 +97,11 @@ class PageNavigationTest extends TestCase
             [
                 'type' => 'dropdown',
                 'label' => 'Tentang Kami',
-                'children' => [['label' => 'Visi Sekolah', 'url' => '/visi-misi']],
+                'children' => [['label' => 'Visi Sekolah', 'url' => '/visi-misi-tujuan']],
             ],
         ]);
 
-        $page = $this->page('Visi Misi', 'visi-misi');
+        $page = $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
         $this->actingAs(User::factory()->create())
             ->get("/admin/pages/{$page->id}/edit")
@@ -119,7 +119,7 @@ class PageNavigationTest extends TestCase
     {
         $this->seedNav([['type' => 'single', 'label' => 'Beranda', 'url' => '/']]);
 
-        $page = $this->page('Visi Misi', 'visi-misi');
+        $page = $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
         $this->actingAs(User::factory()->create())
             ->get("/admin/pages/{$page->id}/edit")
@@ -137,11 +137,11 @@ class PageNavigationTest extends TestCase
             [
                 'type' => 'dropdown',
                 'label' => 'Tentang Kami',
-                'children' => [['label' => 'Visi Sekolah', 'url' => '/visi-misi']],
+                'children' => [['label' => 'Visi Sekolah', 'url' => '/visi-misi-tujuan']],
             ],
         ]);
 
-        $page = $this->page('Visi Misi', 'visi-misi');
+        $page = $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
         $this->actingAs(User::factory()->create())
             ->get("/admin/pages/{$page->id}")
@@ -158,7 +158,7 @@ class PageNavigationTest extends TestCase
     {
         $this->seedNav([['type' => 'single', 'label' => 'Beranda', 'url' => '/']]);
 
-        $page = $this->page('Visi Misi', 'visi-misi');
+        $page = $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
         $this->actingAs(User::factory()->create())
             ->get("/admin/pages/{$page->id}")
@@ -204,14 +204,14 @@ class PageNavigationTest extends TestCase
     {
         $this->seedNav([
             ['type' => 'single', 'label' => 'Beranda', 'url' => '/'],
-            ['type' => 'single', 'label' => 'Visi Misi', 'url' => '/visi-misi'],
+            ['type' => 'single', 'label' => 'Visi, Misi dan Tujuan', 'url' => '/visi-misi-tujuan'],
         ]);
 
-        $page = $this->page('Visi Misi', 'visi-misi');
+        $page = $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
         $this->actingAs(User::factory()->create())->put("/admin/pages/{$page->id}", [
-            'title' => 'Visi Misi',
-            'content' => 'Visi misi sekolah.',
+            'title' => 'Visi, Misi dan Tujuan',
+            'content' => 'Visi, Misi dan Tujuan sekolah.',
             'is_published' => true,
             'nav_placement' => 'none',
         ])->assertRedirect(route('admin.pages.index'));
@@ -225,7 +225,7 @@ class PageNavigationTest extends TestCase
     public function test_moving_page_between_menu_levels_keeps_one_entry(): void
     {
         $this->seedNav([
-            ['type' => 'single', 'label' => 'Visi Misi', 'url' => '/visi-misi'],
+            ['type' => 'single', 'label' => 'Visi, Misi dan Tujuan', 'url' => '/visi-misi-tujuan'],
             [
                 'type' => 'dropdown',
                 'label' => 'Tentang Kami',
@@ -233,36 +233,36 @@ class PageNavigationTest extends TestCase
             ],
         ]);
 
-        $page = $this->page('Visi Misi', 'visi-misi');
+        $page = $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
         $this->actingAs(User::factory()->create())->put("/admin/pages/{$page->id}", [
-            'title' => 'Visi Misi',
-            'content' => 'Visi misi sekolah.',
+            'title' => 'Visi, Misi dan Tujuan',
+            'content' => 'Visi, Misi dan Tujuan sekolah.',
             'is_published' => true,
             'nav_placement' => 'dropdown',
             'nav_parent_label' => 'Tentang Kami',
-            'nav_label' => 'Visi & Misi',
+            'nav_label' => 'Visi, Misi dan Tujuan',
         ])->assertRedirect(route('admin.pages.index'));
 
         $items = $this->navItems();
 
         $this->assertCount(1, $items);
         $this->assertCount(2, $items[0]['children']);
-        $this->assertSame('Visi & Misi', $items[0]['children'][1]['label']);
-        $this->assertSame('/visi-misi', $items[0]['children'][1]['url']);
+        $this->assertSame('Visi, Misi dan Tujuan', $items[0]['children'][1]['label']);
+        $this->assertSame('/visi-misi-tujuan', $items[0]['children'][1]['url']);
     }
 
     public function test_status_update_keeps_nav_entry(): void
     {
-        $this->seedNav([['type' => 'single', 'label' => 'Visi Misi', 'url' => '/visi-misi']]);
+        $this->seedNav([['type' => 'single', 'label' => 'Visi, Misi dan Tujuan', 'url' => '/visi-misi-tujuan']]);
 
-        $page = $this->page('Visi Misi', 'visi-misi');
+        $page = $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
         $this->actingAs(User::factory()->create())
             ->patch("/admin/pages/{$page->id}/status", ['is_published' => false])
             ->assertRedirect();
 
-        $this->assertSame('/visi-misi', $this->navItems()[0]['url']);
+        $this->assertSame('/visi-misi-tujuan', $this->navItems()[0]['url']);
     }
 
     public function test_deleting_page_removes_its_nav_entry(): void
@@ -274,12 +274,12 @@ class PageNavigationTest extends TestCase
                 'label' => 'Tentang Kami',
                 'children' => [
                     ['label' => 'Sejarah', 'url' => '/sejarah'],
-                    ['label' => 'Visi Misi', 'url' => '/visi-misi'],
+                    ['label' => 'Visi, Misi dan Tujuan', 'url' => '/visi-misi-tujuan'],
                 ],
             ],
         ]);
 
-        $page = $this->page('Visi Misi', 'visi-misi');
+        $page = $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
         $this->actingAs(User::factory()->create())
             ->delete("/admin/pages/{$page->id}")
@@ -296,15 +296,15 @@ class PageNavigationTest extends TestCase
     {
         $this->seedNav([
             ['type' => 'single', 'label' => 'Beranda', 'url' => '/'],
-            ['type' => 'single', 'label' => 'Visi Misi', 'url' => '/visi-misi'],
+            ['type' => 'single', 'label' => 'Visi, Misi dan Tujuan', 'url' => '/visi-misi-tujuan'],
             [
                 'type' => 'dropdown',
                 'label' => 'Tentang Kami',
-                'children' => [['label' => 'Visi Misi', 'url' => '/visi-misi']],
+                'children' => [['label' => 'Visi, Misi dan Tujuan', 'url' => '/visi-misi-tujuan']],
             ],
         ]);
 
-        $this->page('Visi Misi', 'visi-misi', published: false);
+        $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan', published: false);
 
         $this->get('/')
             ->assertOk()
@@ -312,7 +312,7 @@ class PageNavigationTest extends TestCase
                 ->component('Welcome')
                 ->has('navItems', 1)
                 ->where('navItems.0.label', 'Beranda')
-                ->where('draftPageSlugs', ['visi-misi'])
+                ->where('draftPageSlugs', ['visi-misi-tujuan'])
             );
     }
 
@@ -320,33 +320,33 @@ class PageNavigationTest extends TestCase
     {
         $this->seedNav([
             ['type' => 'single', 'label' => 'Beranda', 'url' => '/'],
-            ['type' => 'single', 'label' => 'Visi Misi', 'url' => '/visi-misi'],
+            ['type' => 'single', 'label' => 'Visi, Misi dan Tujuan', 'url' => '/visi-misi-tujuan'],
         ]);
 
-        $this->page('Visi Misi', 'visi-misi');
+        $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
         $this->get('/')
             ->assertOk()
             ->assertInertia(fn (Assert $assert) => $assert
                 ->has('navItems', 2)
-                ->where('navItems.1.url', '/visi-misi')
+                ->where('navItems.1.url', '/visi-misi-tujuan')
             );
     }
 
     public function test_draft_page_is_not_reachable_for_visitors(): void
     {
-        $this->page('Visi Misi', 'visi-misi', published: false);
+        $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan', published: false);
 
-        $this->get('/visi-misi')->assertNotFound();
-        $this->get('/visi-misi?preview=1')->assertNotFound();
+        $this->get('/visi-misi-tujuan')->assertNotFound();
+        $this->get('/visi-misi-tujuan?preview=1')->assertNotFound();
     }
 
     public function test_admin_can_preview_draft_page(): void
     {
-        $this->page('Visi Misi', 'visi-misi', published: false);
+        $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan', published: false);
 
         $this->actingAs(User::factory()->create())
-            ->get('/visi-misi?preview=1')
+            ->get('/visi-misi-tujuan?preview=1')
             ->assertOk()
             ->assertInertia(fn (Assert $assert) => $assert
                 ->component('Public/Page')
@@ -356,18 +356,18 @@ class PageNavigationTest extends TestCase
 
     public function test_admin_preview_flag_does_not_expose_draft_without_query(): void
     {
-        $this->page('Visi Misi', 'visi-misi', published: false);
+        $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan', published: false);
 
         $this->actingAs(User::factory()->create())
-            ->get('/visi-misi')
+            ->get('/visi-misi-tujuan')
             ->assertNotFound();
     }
 
     public function test_public_page_has_no_preview_banner(): void
     {
-        $this->page('Visi Misi', 'visi-misi');
+        $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan');
 
-        $this->get('/visi-misi')
+        $this->get('/visi-misi-tujuan')
             ->assertOk()
             ->assertInertia(fn (Assert $assert) => $assert
                 ->component('Public/Page')
@@ -377,7 +377,7 @@ class PageNavigationTest extends TestCase
 
     public function test_navigation_settings_marks_draft_pages(): void
     {
-        $this->page('Visi Misi', 'visi-misi', published: false);
+        $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan', published: false);
         $this->page('Sejarah', 'sejarah');
 
         $this->actingAs(User::factory()->create())
@@ -389,7 +389,7 @@ class PageNavigationTest extends TestCase
                 ->where('linkOptions', function ($options) {
                     $labels = collect($options)->pluck('label')->all();
 
-                    return in_array('Laman: Visi Misi (draf)', $labels, true)
+                    return in_array('Laman: Visi, Misi dan Tujuan (draf)', $labels, true)
                         && in_array('Laman: Sejarah', $labels, true);
                 })
             );
@@ -397,7 +397,7 @@ class PageNavigationTest extends TestCase
 
     public function test_footer_settings_only_offer_published_pages(): void
     {
-        $this->page('Visi Misi', 'visi-misi', published: false);
+        $this->page('Visi, Misi dan Tujuan', 'visi-misi-tujuan', published: false);
         $this->page('Sejarah', 'sejarah');
 
         $this->actingAs(User::factory()->create())
@@ -408,7 +408,7 @@ class PageNavigationTest extends TestCase
                     $labels = collect($options)->pluck('label')->all();
 
                     return in_array('Laman: Sejarah', $labels, true)
-                        && ! in_array('Laman: Visi Misi (draf)', $labels, true);
+                        && ! in_array('Laman: Visi, Misi dan Tujuan (draf)', $labels, true);
                 })
             );
     }
@@ -497,15 +497,15 @@ class PageNavigationTest extends TestCase
         ]);
 
         $this->actingAs(User::factory()->create())->post('/admin/pages', [
-            'title' => 'Visi Misi',
-            'content' => 'Visi misi sekolah.',
+            'title' => 'Visi, Misi dan Tujuan',
+            'content' => 'Visi, Misi dan Tujuan sekolah.',
             'is_published' => true,
             'nav_placement' => 'dropdown',
             'nav_parent_label' => 'Tentang Kami',
         ])->assertRedirect(route('admin.pages.index'));
 
         $this->assertSame(
-            ['label' => 'Visi Misi', 'url' => '/visi-misi'],
+            ['label' => 'Visi, Misi dan Tujuan', 'url' => '/halaman-visi-misi-dan-tujuan'],
             $this->navItems()[0]['children'][0],
         );
     }
