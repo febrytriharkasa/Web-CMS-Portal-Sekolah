@@ -24,12 +24,13 @@ Route::get('/img/{width}/{path}', [ImageVariantController::class, '__invoke'])
     ->where('path', '.*')
     ->name('image.variant');
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/berita', [HomeController::class, 'news'])->name('public.news');
-Route::get('/cari', [HomeController::class, 'search'])->name('public.search');
-Route::get('/statistik', [HomeController::class, 'statistics'])->name('public.statistics');
-Route::get('/guru-tendik', [HomeController::class, 'staffArchive'])->name('public.staff.archive');
+Route::get('/', [HomeController::class, 'index'])->middleware('throttle:public')->name('home');
+Route::get('/berita', [HomeController::class, 'news'])->middleware('throttle:public')->name('public.news');
+Route::get('/cari', [HomeController::class, 'search'])->middleware('throttle:search')->name('public.search');
+Route::get('/statistik', [HomeController::class, 'statistics'])->middleware('throttle:public')->name('public.statistics');
+Route::get('/guru-tendik', [HomeController::class, 'staffArchive'])->middleware('throttle:public')->name('public.staff.archive');
 Route::get('/guru-tendik/{staff}', [HomeController::class, 'staffDetail'])
+    ->middleware('throttle:public')
     ->whereNumber('staff')
     ->name('public.staff.detail');
 Route::post('/api/chat', [ChatBotController::class, 'send'])->middleware('throttle:chat')->name('api.chat');
@@ -49,10 +50,12 @@ Route::get('/robots.txt', function () {
 })->name('robots');
 
 Route::get('/{slug}', [HomeController::class, 'pageBySlug'])
+    ->middleware('throttle:public')
     ->where('slug', '^(?!admin|api|login|logout|register|password|email|dashboard|profile|sanctum|_debugbar|berita|cari|statistik|guru-tendik|verify-email|confirm-password|forgot-password|reset-password)[a-zA-Z0-9_-]+$')
     ->name('public.page');
 
 Route::get('/{category}/{slug}', [HomeController::class, 'showPost'])
+    ->middleware('throttle:public')
     ->where('category', '^(?!admin|api|login|logout|register|password|email|dashboard|profile|sanctum|_debugbar|reset-password|verify-email).*$')
     ->name('public.post');
 
